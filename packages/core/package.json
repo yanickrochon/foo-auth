@@ -1,0 +1,20 @@
+{
+  "name": "@ultra-auth/core",
+  "version": "0.0.0",
+  "main": "./lib/index.js",
+  "types": "./lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch",
+    "lint": "TIMING=1 eslint \"**/*.ts*\""
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "eslint": "^8.27.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^4.8.4"
+  }
+}
