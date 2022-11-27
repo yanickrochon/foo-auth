@@ -1,3 +1,3 @@
-const N = 'Ultra Auth';
+const N = 'Foo Auth';
 
 export default N;

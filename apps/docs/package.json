@@ -1,27 +1,28 @@
 {
-  "name": "docs",
+  "name": "@foo-auth/docs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3600",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reset": "rm -rf node_modules .next"
   },
   "dependencies": {
-    "next": "13.0.0",
+    "next": "13.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ui": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "eslint": "7.32.0",
-    "eslint-config-custom": "*",
-    "tsconfig": "*",
-    "@types/node": "^17.0.12",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
-    "typescript": "^4.5.3"
+    "@babel/core": "^7.20.2",
+    "@foo-auth/config-eslint": "*",
+    "@foo-auth/tsconfig": "*",
+    "eslint": "8.28.0",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "typescript": "^4.9.3"
   }
 }

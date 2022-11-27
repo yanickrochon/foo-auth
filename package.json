@@ -1,19 +1,20 @@
 {
   "name": "ultra-auth",
-  "version": "0.0.0",
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "packages/config/*"
   ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "reset": "turbo run reset"
   },
   "devDependencies": {
-    "eslint-config-custom": "*",
+    "@foo-auth/config-eslint": "*",
     "prettier": "latest",
     "turbo": "latest"
   },
