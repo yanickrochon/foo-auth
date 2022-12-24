@@ -7,11 +7,14 @@ import {
   Cookies
 } from '@foo-auth/core';
 
+import { validateSecret } from '@foo-auth/core';
+
 
 type NextFooAuthServerAdapter = FooAuthServerAdapter<NextApiRequest, NextApiResponse>;
 
-
 export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<SessionType>) {
+  validateSecret(config.secret);
+
   const server:NextFooAuthServerAdapter = {
     getCookies(req:NextApiRequest, res:NextApiResponse) {
       return new Cookies(req, res);
@@ -65,7 +68,7 @@ export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<Sess
       const req = server.getRequest(_req);
       const res = server.getResponse(_res);
       const cookies = server.getCookies(_req, _res);
-      const session = config.session({ req, res, cookies });
+      const session = config.session({ req, res, cookies, secret:config.secret });
   
       await routeFn({ req, res, config, cookies, session });
     }

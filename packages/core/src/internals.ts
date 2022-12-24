@@ -25,13 +25,16 @@ export type GetSession<SessionType> = {
 }
 
 export type SetSession<SessionType> = {
-  (sesion:SessionType):boolean;
+  /**
+   * Return a session token for the given session data
+   */
+  (sesion:SessionType):string;
 }
 
 
 export type FooSession<SessionType> = {
   getSession:GetSession<SessionType>;
-  setSession?:SetSession<SessionType>|undefined;
+  setSession:SetSession<SessionType>;
 }
 
 
@@ -60,6 +63,7 @@ export type FooAuthProvider<SessionType> = {
 export type FooSessionInitArg = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
+  secret:string;
   cookies:Cookies;
 }
 

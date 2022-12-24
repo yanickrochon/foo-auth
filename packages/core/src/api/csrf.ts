@@ -2,7 +2,7 @@ import { createCSRFToken } from '../encryption/csrf';
 
 import type { FooAuthApiRoutes, FooAuthConfigRoutePrefix } from '../internals';
 
-export function csrfRoutes(baseRoutes:FooAuthConfigRoutePrefix):FooAuthApiRoutes {
+export function csrfRoutes<SessionType>(baseRoutes:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType> {
   return {
     [baseRoutes.csrfToken as string]: ({ res, config }) => {
       const { secret } = config;

@@ -8,7 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { getRoutes, Cookies } from '@foo-auth/core';
+import { validateSecret } from '@foo-auth/core';
 export default function fooAuthNext(config) {
+    validateSecret(config.secret);
     const server = {
         getCookies(req, res) {
             return new Cookies(req, res);
@@ -56,7 +58,7 @@ export default function fooAuthNext(config) {
             const req = server.getRequest(_req);
             const res = server.getResponse(_res);
             const cookies = server.getCookies(_req, _res);
-            const session = config.session({ req, res, cookies });
+            const session = config.session({ req, res, cookies, secret: config.secret });
             yield routeFn({ req, res, config, cookies, session });
         }
         if (!_res.headersSent) {

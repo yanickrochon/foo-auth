@@ -60,6 +60,6 @@ export function verifyCSRFToken({
 }: VerifyCSRFTokenArg):CSRFTokenVerified {
   const [ signature, tokenHash ] = token?.split(TOKEN_SEPARATOR) ?? [];
   const tokenHashVerify = createCSRFTokenHash(signature, secret);
-  
+
   return tokenHashVerify === tokenHash;
 }

@@ -3,8 +3,12 @@ import { randomBytes, createCipheriv, createDecipheriv } from "crypto";
 const ALGORITHM = "aes-256-cbc";
 const KEY_LENGTH = 32;
 const IV_LENGTH = 16;
-const TOKEN_SEPARATOR = ';';
+const TOKEN_SEPARATOR = '/';
 const STRING_ENCODING = "base64";
+
+
+const SECRET_MIN_LENGTH = 32;
+
 
 export interface EncryptionArg {
   text:string;
@@ -19,6 +23,19 @@ export interface DecryptionArg {
 };
 
 export type DecryptionValue = string | null;
+
+
+/**
+ * Make sure the secret key is valid
+ * @param secret 
+ * @returns 
+ */
+export function validateSecret(secret:string) {
+  if (secret.length < SECRET_MIN_LENGTH) {
+    throw new Error('Secret must be at least 32 characters');
+  } 
+}
+
 
 /**
  * Encrypt a given text using the provided secret key. The key may be of any

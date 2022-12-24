@@ -1,6 +1,6 @@
 
 
-export type ProviderRouteResponse<T> = {
+export type ProviderRouteResponse<T = any> = {
   type:"redirect";
   path:string;
 } | {

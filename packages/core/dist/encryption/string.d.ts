@@ -9,6 +9,12 @@ export interface DecryptionArg {
 }
 export type DecryptionValue = string | null;
 /**
+ * Make sure the secret key is valid
+ * @param secret
+ * @returns
+ */
+export declare function validateSecret(secret: string): void;
+/**
  * Encrypt a given text using the provided secret key. The key may be of any
  * length greater or equal to 32 bytes, but only the first 32 bytes will be used.
  * The resulted value consists of the public key, followed by the encrypted data,

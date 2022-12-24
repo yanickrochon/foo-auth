@@ -21,11 +21,14 @@ export type GetSession<SessionType> = {
     (): SessionType | null;
 };
 export type SetSession<SessionType> = {
-    (sesion: SessionType): boolean;
+    /**
+     * Return a session token for the given session data
+     */
+    (sesion: SessionType): string;
 };
 export type FooSession<SessionType> = {
     getSession: GetSession<SessionType>;
-    setSession?: SetSession<SessionType> | undefined;
+    setSession: SetSession<SessionType>;
 };
 export type FooAuthApiRouteOptions<SessionType> = {
     req: FooAuthApiRequest;
@@ -46,6 +49,7 @@ export type FooAuthProvider<SessionType> = {
 export type FooSessionInitArg = {
     req: FooAuthApiRequest;
     res: FooAuthApiResponse;
+    secret: string;
     cookies: Cookies;
 };
 export type FooSessionInit<SessionType> = {
