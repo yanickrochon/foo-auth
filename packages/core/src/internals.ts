@@ -20,6 +20,10 @@ export type FooAuthServerAdapter<Request, Response> = {
 }
 
 
+export type ClearSession = {
+  ():void;
+}
+
 export type GetSession<SessionType> = {
   ():SessionType|null;
 }
@@ -33,6 +37,7 @@ export type SetSession<SessionType> = {
 
 
 export type FooSession<SessionType> = {
+  clearSession:ClearSession;
   getSession:GetSession<SessionType>;
   setSession:SetSession<SessionType>;
 }

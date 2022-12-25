@@ -7,6 +7,10 @@ export const SESSION_COOKIE_NAME = 'foo-auth:session';
 export function sessionCookie<T = any>() {
   return ({ cookies, secret }:FooSessionInitArg):FooSession<T> => {
     return {
+      clearSession() {
+        cookies.set(SESSION_COOKIE_NAME, null);
+      },
+
       getSession() {
         const encrypted = cookies.get(SESSION_COOKIE_NAME) ?? '';
 

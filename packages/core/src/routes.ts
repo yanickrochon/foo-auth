@@ -1,5 +1,6 @@
 import type { FooAuthConfig, FooAuthConfigRoutePrefix } from './internals';
 
+import { authRoutes } from './api/auth';
 import { sessionRoutes } from './api/session';
 import { csrfRoutes } from './api/csrf';
 
@@ -20,6 +21,7 @@ export function getRoutes<SessionType>(config:FooAuthConfig<SessionType>) {
   };
 
   const routes = {
+    ...authRoutes(baseRoutes),
     ...sessionRoutes(baseRoutes),
     ...csrfRoutes(baseRoutes)
   };

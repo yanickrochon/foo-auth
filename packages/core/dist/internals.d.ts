@@ -17,6 +17,9 @@ export type FooAuthServerAdapter<Request, Response> = {
     getRequest(req: Request): FooAuthApiRequest;
     getResponse(res: Response): FooAuthApiResponse;
 };
+export type ClearSession = {
+    (): void;
+};
 export type GetSession<SessionType> = {
     (): SessionType | null;
 };
@@ -27,6 +30,7 @@ export type SetSession<SessionType> = {
     (sesion: SessionType): string;
 };
 export type FooSession<SessionType> = {
+    clearSession: ClearSession;
     getSession: GetSession<SessionType>;
     setSession: SetSession<SessionType>;
 };

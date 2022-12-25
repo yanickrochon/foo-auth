@@ -34,6 +34,13 @@ const postSignIn = async (payload:SignInInput) => fetch('/api/sign-in/credential
   body: JSON.stringify(payload)
 }).then(response => response.json());
 
+const postSignOut = async () => fetch('/api/sign-out', {
+  method: 'POST',
+  headers: {
+    "Accept": "application/json"
+  }
+});
+
 
 export default function Docs() {
   const queryClient = useQueryClient();
@@ -48,6 +55,12 @@ export default function Docs() {
     },
   });
 
+  const signOutMutation = useMutation(postSignOut, {
+    onSuccess: () => {
+      // Invalidate session
+      queryClient.invalidateQueries('session');
+    }
+  })
 
   return (
     <div>
@@ -64,7 +77,7 @@ export default function Docs() {
           Login
         </button>
         <button onClick={() => {
-          console.log("click");
+          signOutMutation.mutate();
         }}>
           Logout
         </button>

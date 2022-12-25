@@ -1,3 +1,4 @@
+import { authRoutes } from './api/auth';
 import { sessionRoutes } from './api/session';
 import { csrfRoutes } from './api/csrf';
 const defaultBaseRoutes = {
@@ -9,7 +10,7 @@ const defaultBaseRoutes = {
 };
 export function getRoutes(config) {
     const baseRoutes = Object.assign(Object.assign({}, defaultBaseRoutes), config.baseRoutes);
-    const routes = Object.assign(Object.assign({}, sessionRoutes(baseRoutes)), csrfRoutes(baseRoutes));
+    const routes = Object.assign(Object.assign(Object.assign({}, authRoutes(baseRoutes)), sessionRoutes(baseRoutes)), csrfRoutes(baseRoutes));
     // register routes
     if (config.providers) {
         for (const providerInit of config.providers) {
