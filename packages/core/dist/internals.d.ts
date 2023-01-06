@@ -1,5 +1,8 @@
 import type Cookies from "cookies";
 export type FooAuthApiRequest = {
+    headers: {
+        [x: string]: string;
+    };
     query: Partial<{
         [key: string]: string | string[];
     }>;
@@ -17,22 +20,26 @@ export type FooAuthServerAdapter<Request, Response> = {
     getRequest(req: Request): FooAuthApiRequest;
     getResponse(res: Response): FooAuthApiResponse;
 };
-export type ClearSession = {
+type ClearSession = {
     (): void;
 };
-export type GetSession<SessionType> = {
+type GetSession<SessionType> = {
     (): SessionType | null;
 };
-export type SetSession<SessionType> = {
+type SetSession<SessionType> = {
     /**
      * Return a session token for the given session data
      */
     (sesion: SessionType): string;
 };
+type SessionToken = {
+    (): string | null | undefined;
+};
 export type FooSession<SessionType> = {
     clearSession: ClearSession;
     getSession: GetSession<SessionType>;
     setSession: SetSession<SessionType>;
+    getSessionToken: SessionToken;
 };
 export type FooAuthApiRouteOptions<SessionType> = {
     req: FooAuthApiRequest;
@@ -53,6 +60,7 @@ export type FooAuthProvider<SessionType> = {
 export type FooSessionInitArg = {
     req: FooAuthApiRequest;
     res: FooAuthApiResponse;
+    sessionName?: string;
     secret: string;
     cookies: Cookies;
 };
@@ -72,4 +80,5 @@ export type FooAuthConfig<SessionType> = {
     secret: string;
     baseRoutes?: FooAuthConfigRoutePrefix;
 };
+export {};
 //# sourceMappingURL=internals.d.ts.map

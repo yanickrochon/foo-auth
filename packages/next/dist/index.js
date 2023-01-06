@@ -17,6 +17,7 @@ export default function fooAuthNext(config) {
         },
         getRequest(req) {
             return {
+                headers: req.headers,
                 query: req.query,
                 body: req.body
             };

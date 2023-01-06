@@ -1,10 +1,11 @@
 export function sessionRoutes(baseRoutes) {
     return {
         [baseRoutes.session]: ({ res, session }) => {
+            const sessionToken = session.getSessionToken();
             const sessionValue = session.getSession();
-            // TODO : return session token
             res.status(200).send({
                 success: true,
+                token: sessionToken,
                 session: sessionValue
             });
         }

@@ -1,9 +1,10 @@
+import type { IncomingMessage } from 'http';
 import type Cookies from "cookies";
 
 export type FooAuthApiRequest = {
   query: Partial<{ [key:string]: string | string[] }>;
   body:any
-}
+} & IncomingMessage;
 
 export type FooAuthApiResponse<T = any> = {
   redirect(statusCode:number, url:string):FooAuthApiResponse;
@@ -20,19 +21,23 @@ export type FooAuthServerAdapter<Request, Response> = {
 }
 
 
-export type ClearSession = {
+type ClearSession = {
   ():void;
 }
 
-export type GetSession<SessionType> = {
+type GetSession<SessionType> = {
   ():SessionType|null;
 }
 
-export type SetSession<SessionType> = {
+type SetSession<SessionType> = {
   /**
    * Return a session token for the given session data
    */
   (sesion:SessionType):string;
+}
+
+type SessionToken = {
+  ():string|null|undefined;
 }
 
 
@@ -40,6 +45,7 @@ export type FooSession<SessionType> = {
   clearSession:ClearSession;
   getSession:GetSession<SessionType>;
   setSession:SetSession<SessionType>;
+  getSessionToken:SessionToken;
 }
 
 
@@ -68,6 +74,7 @@ export type FooAuthProvider<SessionType> = {
 export type FooSessionInitArg = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
+  sessionName?:string;
   secret:string;
   cookies:Cookies;
 }

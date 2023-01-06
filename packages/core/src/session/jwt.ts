@@ -1,25 +1,23 @@
 import { encrypt, decrypt } from '../encryption/string';
 import type { FooSessionInitArg, FooSession } from '../internals';
 
-
-export const SESSION_COOKIE_NAME = 'foo-auth:session';
+export const JWT_HEADER_NAME = 'x-authorized';
 
 export function sessionCookie<T = any>() {
   return ({ 
-    sessionName = SESSION_COOKIE_NAME, 
-    cookies, 
+    req, 
     secret
   }:FooSessionInitArg):FooSession<T> => ({
     clearSession() {
-      cookies.set(sessionName, null);
+      /* nothing */
     },
 
     getSessionToken() {
-      return undefined;
+      return req.headers[JWT_HEADER_NAME] as string || undefined;
     },
-
+    
     getSession() {
-      const encrypted = cookies.get(sessionName) ?? '';
+      const encrypted = req.headers[JWT_HEADER_NAME] as string;
 
       try {
         const decrypted = decrypt({ encrypted, secret })
@@ -35,8 +33,6 @@ export function sessionCookie<T = any>() {
         text: JSON.stringify(session),
         secret
       });
-
-      cookies.set(sessionName, encrypted);
 
       return encrypted;
     },

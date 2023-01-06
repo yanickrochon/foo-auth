@@ -21,6 +21,7 @@ export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<Sess
     },
     getRequest(req:NextApiRequest) {
       return {
+        headers: req.headers,
         query: req.query,
         body: req.body
       };
