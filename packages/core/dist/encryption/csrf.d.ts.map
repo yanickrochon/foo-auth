@@ -1,1 +1,0 @@
-{"version":3,"file":"csrf.d.ts","sourceRoot":"","sources":["../../src/encryption/csrf.ts"],"names":[],"mappings":"AAUA,MAAM,MAAM,SAAS,GAAG,MAAM,CAAC;AAE/B,MAAM,WAAW,kBAAkB;IACjC,KAAK,EAAC,MAAM,CAAC;CACd;AAED,MAAM,MAAM,iBAAiB,GAAG,OAAO,CAAC;AAYxC;;;;;;;;;;GAUG;AACH,wBAAgB,eAAe,IAAG,SAAS,CAM1C;AAED;;;GAGG;AACH,wBAAgB,eAAe,CAAC,EAC9B,KAAK,EACN,EAAE,kBAAkB,GAAE,iBAAiB,CAKvC"}
