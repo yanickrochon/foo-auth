@@ -1,4 +1,7 @@
-import type { FooSessionInitArg, FooSession } from '../internals';
-export declare const SESSION_COOKIE_NAME = "foo-auth:session";
-export declare function sessionCookie<T = any>(): ({ sessionName, cookies, secret }: FooSessionInitArg) => FooSession<T>;
+import type { FooSessionInitArg, FooSession, FooSessionConfig } from '../internals';
+export type FooSessionCookiesConfig<SessionType> = {
+    sessionName?: string;
+} & FooSessionConfig<SessionType>;
+export declare const DEFAULT_SESSION_COOKIE_NAME = "foo-auth:session";
+export declare function sessionCookie<SessionType = any>({ sessionName, encodeSession, decodeSession }: FooSessionCookiesConfig<SessionType>): ({ cookies, secretKey }: FooSessionInitArg) => FooSession<SessionType>;
 //# sourceMappingURL=cookie.d.ts.map

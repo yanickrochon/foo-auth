@@ -3,6 +3,7 @@ import {
   getRoutes,
   FooAuthConfig,
   FooAuthServerAdapter,
+  FooAuthApiRequest,
   FooAuthApiResponse,
   Cookies
 } from '@foo-auth/core';
@@ -13,45 +14,17 @@ import { validateSecret } from '@foo-auth/core';
 type NextFooAuthServerAdapter = FooAuthServerAdapter<NextApiRequest, NextApiResponse>;
 
 export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<SessionType>) {
-  validateSecret(config.secret);
+  const secretKey = validateSecret(config.secret);
 
   const server:NextFooAuthServerAdapter = {
     getCookies(req:NextApiRequest, res:NextApiResponse) {
       return new Cookies(req, res);
     },
     getRequest(req:NextApiRequest) {
-      return {
-        headers: req.headers,
-        query: req.query,
-        body: req.body
-      };
+      return req as FooAuthApiRequest;
     },
     getResponse(res:NextApiResponse) {
-      const response:FooAuthApiResponse = {
-        redirect(statusCode, url?) {
-          if (typeof statusCode === 'string') {
-            res.redirect(statusCode);
-          } else {
-            res.redirect(statusCode, url as string);
-          }
-
-          return response;
-        },
-        status(statusCode:number) {
-          res.status(statusCode);
-          return response;
-        },
-        send(body:any) {
-          res.send(body);
-          return response;
-        },
-        end(cb?:()=>void) {
-          res.end(cb);
-          return response;
-        }
-      };
-
-      return response;
+      return res as FooAuthApiResponse;
     }  
   };
 
@@ -69,9 +42,9 @@ export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<Sess
       const req = server.getRequest(_req);
       const res = server.getResponse(_res);
       const cookies = server.getCookies(_req, _res);
-      const session = config.session({ req, res, cookies, secret:config.secret });
+      const session = config.session({ req, res, cookies, secretKey });
   
-      await routeFn({ req, res, config, cookies, session });
+      await routeFn({ req, res, config, cookies, session, secretKey });
     }
 
     if (!_res.headersSent) {

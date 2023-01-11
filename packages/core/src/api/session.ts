@@ -3,9 +3,9 @@ import type { FooAuthApiRoutes, FooAuthConfigRoutePrefix } from '../internals';
 
 export function sessionRoutes<SessionType = any>(baseRoutes:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType> {
   return {
-    [baseRoutes.session as string]: ({ res, session }) => {
-      const sessionToken = session.getSessionToken();
-      const sessionValue = session.getSession();
+    [baseRoutes.session as string]: async ({ res, session }) => {
+      const sessionToken = await session.getSessionToken();
+      const sessionValue = await session.getSession();
 
       res.status(200).send({
         success:true,

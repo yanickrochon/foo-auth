@@ -1,30 +1,27 @@
-import { createHash, randomBytes, sign } from "crypto";
+import { createHash, randomBytes } from "crypto";
+import type { KeyObject } from 'crypto';
 
 
 const HASH_ALGORITHM = "sha256";
-const TOKEN_SIZE = 32;
+const TOKEN_SIGNATURE_SIZE = 32;
 const TOKEN_SEPARATOR = ';';
-const STRING_ENCODING = "base64";
+const TOKEN_ENCODING = "base64";
 
-export interface CreateCSRFTokenArg {
-  secret:string
-};
 
 export type CSRFToken = string;
 
 export interface VerifyCSRFTokenArg {
   token:string;
-  secret:string;
 };
 
 export type CSRFTokenVerified = boolean;
 
 
 
-function createCSRFTokenHash(signature:string, secret:string):string {
+function createCSRFTokenHash(signature:string):string {
    return createHash(HASH_ALGORITHM)
-      .update(`${signature}${secret}`)
-      .digest(STRING_ENCODING)
+      .update(signature)
+      .digest(TOKEN_ENCODING)
 }
 
  
@@ -40,11 +37,9 @@ function createCSRFTokenHash(signature:string, secret:string):string {
  * https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie
  * https://owasp.org/www-chapter-london/assets/slides/David_Johansson-Double_Defeat_of_Double-Submit_Cookie.pdf
  */
-export function createCSRFToken({
-  secret
-}: CreateCSRFTokenArg):CSRFToken {
-  const signature = randomBytes(TOKEN_SIZE).toString(STRING_ENCODING);
-  const tokenHash = createCSRFTokenHash(signature, secret);
+export function createCSRFToken():CSRFToken {
+  const signature = randomBytes(TOKEN_SIGNATURE_SIZE).toString(TOKEN_ENCODING);
+  const tokenHash = createCSRFTokenHash(signature);
   const token = `${signature}${TOKEN_SEPARATOR}${tokenHash}`;
 
   return token;
@@ -55,11 +50,10 @@ export function createCSRFToken({
  * verifies, or false otherwise
  */
 export function verifyCSRFToken({
-  token,
-  secret
+  token
 }: VerifyCSRFTokenArg):CSRFTokenVerified {
   const [ signature, tokenHash ] = token?.split(TOKEN_SEPARATOR) ?? [];
-  const tokenHashVerify = createCSRFTokenHash(signature, secret);
+  const tokenHashVerify = createCSRFTokenHash(signature);
 
   return tokenHashVerify === tokenHash;
 }

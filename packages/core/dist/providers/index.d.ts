@@ -1,9 +1,2 @@
-export type ProviderRouteResponse<T = any> = {
-    type: "redirect";
-    path: string;
-} | {
-    type?: "response";
-    success: boolean;
-    message?: T;
-};
+export declare const test = "ok";
 //# sourceMappingURL=index.d.ts.map

@@ -1,40 +1,67 @@
-import { encrypt, decrypt } from '../encryption/string';
-import type { FooSessionInitArg, FooSession } from '../internals';
+import { jwtEncode, jwtDecode } from '../encryption/jwt';
 
-export const JWT_HEADER_NAME = 'x-authorized';
+import type { FooSessionInitArg, FooSessionConfig, FooSession, FooAuthApiRequest } from '../internals';
 
-export function sessionCookie<T = any>() {
-  return ({ 
-    req, 
-    secret
-  }:FooSessionInitArg):FooSession<T> => ({
+
+
+export type FooSessionJwtConfig<SessionType> = {
+  issuer:string;
+  audience:string;
+  maxTokenAge:string;
+} & FooSessionConfig<SessionType>;
+
+
+export const JWT_HEADER_NAME = 'Authorization';
+
+
+export function sessionCookie<SessionType = any>({
+  issuer,
+  audience,
+  maxTokenAge,
+  encodeSession,
+  decodeSession
+}:FooSessionJwtConfig<SessionType>) {
+  const getToken = (req:FooAuthApiRequest) => {
+    const token = req.headers[JWT_HEADER_NAME] as string;
+
+    if (token) {
+      return token.replace('Bearer ', '');
+    } else {
+      return undefined;
+    }
+  };
+
+  return ({ req, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
     clearSession() {
       /* nothing */
     },
 
     getSessionToken() {
-      return req.headers[JWT_HEADER_NAME] as string || undefined;
+      return getToken(req);
     },
     
-    getSession() {
-      const encrypted = req.headers[JWT_HEADER_NAME] as string;
+    async getSession() {
+      const token = getToken(req);
 
-      try {
-        const decrypted = decrypt({ encrypted, secret })
+      if (token) {
+        const result = await jwtDecode(token, secretKey, { issuer, audience });
 
-        return decrypted ? JSON.parse(decrypted) as T : null;
-      } catch (e) {
-        return null; // failed to parse cookie, assume invalid session
+        if (result?.payload) {
+          const payload = await decodeSession(result.payload as any);
+  
+          return payload;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
       }
     },
 
-    setSession(session) {
-      const encrypted = encrypt({
-        text: JSON.stringify(session),
-        secret
-      });
+    async setSession(payload) {
+      const data = await encodeSession(payload);
 
-      return encrypted;
+      return jwtEncode(data, secretKey, { issuer, audience, maxTokenAge });
     },
   });
 };

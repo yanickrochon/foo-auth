@@ -10,43 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { getRoutes, Cookies } from '@foo-auth/core';
 import { validateSecret } from '@foo-auth/core';
 export default function fooAuthNext(config) {
-    validateSecret(config.secret);
+    const secretKey = validateSecret(config.secret);
     const server = {
         getCookies(req, res) {
             return new Cookies(req, res);
         },
         getRequest(req) {
-            return {
-                headers: req.headers,
-                query: req.query,
-                body: req.body
-            };
+            return req;
         },
         getResponse(res) {
-            const response = {
-                redirect(statusCode, url) {
-                    if (typeof statusCode === 'string') {
-                        res.redirect(statusCode);
-                    }
-                    else {
-                        res.redirect(statusCode, url);
-                    }
-                    return response;
-                },
-                status(statusCode) {
-                    res.status(statusCode);
-                    return response;
-                },
-                send(body) {
-                    res.send(body);
-                    return response;
-                },
-                end(cb) {
-                    res.end(cb);
-                    return response;
-                }
-            };
-            return response;
+            return res;
         }
     };
     const apiRoutes = getRoutes(config);
@@ -59,8 +32,8 @@ export default function fooAuthNext(config) {
             const req = server.getRequest(_req);
             const res = server.getResponse(_res);
             const cookies = server.getCookies(_req, _res);
-            const session = config.session({ req, res, cookies, secret: config.secret });
-            yield routeFn({ req, res, config, cookies, session });
+            const session = config.session({ req, res, cookies, secretKey });
+            yield routeFn({ req, res, config, cookies, session, secretKey });
         }
         if (!_res.headersSent) {
             _res.status(404).end();

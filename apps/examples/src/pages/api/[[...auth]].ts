@@ -12,18 +12,25 @@ type UserCredentials = {
 };
 
 
+
 export default fooAuthNext<SessionType>({
 
-  session: sessionCookie(),
+  session: sessionCookie({
+    encodeSession(sessionValue) {
+      return sessionValue;
+    },
+    decodeSession(data) {
+      return {
+        user: data.user ?? ''
+      };
+    }
+  }),
 
   providers: [
     credentials({
       async authenticate(credentials:UserCredentials) {
         return {
-          success:true,
-          message: {
-            user: credentials.username
-          }
+          user: credentials.username
         };
       }
     })

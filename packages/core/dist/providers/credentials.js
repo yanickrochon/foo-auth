@@ -24,25 +24,27 @@ export function credentials(options) {
     return (baseRoutes) => {
         var _a;
         return ({
-            [`${baseRoutes.signIn}/${(_a = options.name) !== null && _a !== void 0 ? _a : DEFAULT_NAME}`]: ({ req, res, config, session }) => __awaiter(this, void 0, void 0, function* () {
+            [`${baseRoutes.signIn}/${(_a = options.name) !== null && _a !== void 0 ? _a : DEFAULT_NAME}`]: ({ req, res, session }) => __awaiter(this, void 0, void 0, function* () {
                 const _b = req.body, { csrfToken } = _b, credentials = __rest(_b, ["csrfToken"]);
-                const { secret } = config;
+                const { redirect } = req.query;
                 const token = Array.isArray(csrfToken) ? csrfToken.join('') : csrfToken;
-                if (verifyCSRFToken({ token, secret })) {
-                    const response = yield options.authenticate(credentials);
-                    if (response.type === "redirect") {
-                        res.redirect(307, response.path);
-                    }
-                    else if (response.message) {
-                        const token = session.setSession(response.message);
-                        res.status(200).send({
-                            success: response.success,
-                            session: response.message,
-                            token
-                        });
+                if (verifyCSRFToken({ token })) {
+                    const sessionValue = yield options.authenticate(credentials);
+                    if (sessionValue) {
+                        if (redirect) {
+                            res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
+                        }
+                        else {
+                            const token = yield session.setSession(sessionValue);
+                            res.status(200).send({
+                                success: true,
+                                session: sessionValue,
+                                token
+                            });
+                        }
                     }
                     else {
-                        res.status(500).end();
+                        res.status(403).end();
                     }
                 }
                 else {

@@ -1,45 +1,6 @@
 
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-
-
-type SignInInput = {
-  username:string;
-  password:string;
-  csrfToken:string;
-}
-
-
-
-const getCsrfToken = async () => fetch('/api/csrf-token', {
-  method:"GET",
-  headers: {
-    "Accept": "application/json",
-  }
-}).then(response => response.json());
-
-const getSession = async () => fetch('/api/session', {
-  method:"GET",
-  headers: {
-    "Accept": "application/json",
-  }
-}).then(response => response.json());
-
-
-const postSignIn = async (payload:SignInInput) => fetch('/api/sign-in/credentials', {
-  method:"POST",
-  headers: {
-    "Accept": "application/json",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(payload)
-}).then(response => response.json());
-
-const postSignOut = async () => fetch('/api/sign-out', {
-  method: 'POST',
-  headers: {
-    "Accept": "application/json"
-  }
-});
+import { getCsrfToken, getSession, postSignIn, postSignOut } from '../routes';
 
 
 export default function Docs() {

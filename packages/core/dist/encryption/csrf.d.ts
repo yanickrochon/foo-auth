@@ -1,10 +1,6 @@
-export interface CreateCSRFTokenArg {
-    secret: string;
-}
 export type CSRFToken = string;
 export interface VerifyCSRFTokenArg {
     token: string;
-    secret: string;
 }
 export type CSRFTokenVerified = boolean;
 /**
@@ -18,10 +14,10 @@ export type CSRFTokenVerified = boolean;
  * https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie
  * https://owasp.org/www-chapter-london/assets/slides/David_Johansson-Double_Defeat_of_Double-Submit_Cookie.pdf
  */
-export declare function createCSRFToken({ secret }: CreateCSRFTokenArg): CSRFToken;
+export declare function createCSRFToken(): CSRFToken;
 /**
  * Verifies a token presumably created by createCSRFToken and return true if it
  * verifies, or false otherwise
  */
-export declare function verifyCSRFToken({ token, secret }: VerifyCSRFTokenArg): CSRFTokenVerified;
+export declare function verifyCSRFToken({ token }: VerifyCSRFTokenArg): CSRFTokenVerified;
 //# sourceMappingURL=csrf.d.ts.map

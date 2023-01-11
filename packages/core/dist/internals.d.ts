@@ -1,19 +1,28 @@
+/// <reference types="node" />
+/// <reference types="node" />
+import type { IncomingMessage, ServerResponse } from 'http';
 import type Cookies from "cookies";
-export type FooAuthApiRequest = {
-    headers: {
-        [x: string]: string;
-    };
+import type { KeyObject } from 'crypto';
+export interface FooAuthApiRequest extends IncomingMessage {
+    /**
+     * Object of `query` values from url
+     */
     query: Partial<{
         [key: string]: string | string[];
     }>;
     body: any;
-};
-export type FooAuthApiResponse<T = any> = {
-    redirect(statusCode: number, url: string): FooAuthApiResponse;
-    redirect(url: string): FooAuthApiResponse;
-    status(statusCode: number): FooAuthApiResponse;
-    send(body: T): FooAuthApiResponse;
-    end(cb?: () => void): FooAuthApiResponse;
+}
+/**
+* Next `API` route response
+*/
+export declare type FooAuthApiResponse<T = any> = ServerResponse & {
+    /**
+    * Send data `any` data in response
+    */
+    send(body: T): void;
+    status(statusCode: number): FooAuthApiResponse<T>;
+    redirect(url: string): FooAuthApiResponse<T>;
+    redirect(statusCode: number, url: string): FooAuthApiResponse<T>;
 };
 export type FooAuthServerAdapter<Request, Response> = {
     getCookies(req: Request, res: Response): Cookies;
@@ -21,25 +30,29 @@ export type FooAuthServerAdapter<Request, Response> = {
     getResponse(res: Response): FooAuthApiResponse;
 };
 type ClearSession = {
-    (): void;
+    (): void | PromiseLike<void>;
 };
 type GetSession<SessionType> = {
-    (): SessionType | null;
+    (): SessionType | null | PromiseLike<SessionType | null>;
 };
 type SetSession<SessionType> = {
     /**
      * Return a session token for the given session data
      */
-    (sesion: SessionType): string;
+    (sessionValue: SessionType): string | PromiseLike<string>;
 };
 type SessionToken = {
-    (): string | null | undefined;
+    (): string | null | undefined | PromiseLike<string | null | undefined>;
+};
+export type FooSessionConfig<SessionType> = {
+    encodeSession(sessionValue: SessionType): Partial<SessionType> | PromiseLike<Partial<SessionType>>;
+    decodeSession(data: Partial<SessionType>): SessionType | PromiseLike<SessionType>;
 };
 export type FooSession<SessionType> = {
     clearSession: ClearSession;
     getSession: GetSession<SessionType>;
-    setSession: SetSession<SessionType>;
     getSessionToken: SessionToken;
+    setSession: SetSession<SessionType>;
 };
 export type FooAuthApiRouteOptions<SessionType> = {
     req: FooAuthApiRequest;
@@ -47,6 +60,7 @@ export type FooAuthApiRouteOptions<SessionType> = {
     config: Omit<FooAuthConfig<SessionType>, "providers">;
     cookies: Cookies;
     session: FooSession<SessionType>;
+    secretKey: KeyObject;
 };
 export type FooAuthApiRouteHandler<SessionType> = {
     (options: FooAuthApiRouteOptions<SessionType>): void | Promise<void>;
@@ -60,9 +74,8 @@ export type FooAuthProvider<SessionType> = {
 export type FooSessionInitArg = {
     req: FooAuthApiRequest;
     res: FooAuthApiResponse;
-    sessionName?: string;
-    secret: string;
     cookies: Cookies;
+    secretKey: KeyObject;
 };
 export type FooSessionInit<SessionType> = {
     (args: FooSessionInitArg): FooSession<SessionType>;
@@ -77,8 +90,8 @@ export type FooAuthConfigRoutePrefix = {
 export type FooAuthConfig<SessionType> = {
     session: FooSessionInit<SessionType>;
     providers: FooAuthProvider<SessionType>[];
-    secret: string;
     baseRoutes?: FooAuthConfigRoutePrefix;
+    secret: string;
 };
 export {};
 //# sourceMappingURL=internals.d.ts.map
