@@ -1,3 +1,3 @@
-# Ultra Auth
+# Foo Auth
 
 TODO
