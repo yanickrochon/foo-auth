@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from '../../src/encryption/string';
+import { encrypt, decrypt, validateSecret } from '../../src/encryption/string';
 
 
 
@@ -8,19 +8,22 @@ describe('Testing string encryption and decryption', () => {
 
   it('should encrypt and decrypt values', () => {
     const value = { foo:'Hello world' };
+    const secretKey = validateSecret(SECRET);
 
-    const encrypted = encrypt({ text:JSON.stringify(value), secret:SECRET });
+    const encrypted = encrypt({ text:JSON.stringify(value), secretKey });
 
     expect(typeof encrypted).toBe('string');
     expect(encrypted.length).toBeGreaterThan(0);
 
-    const decrypted = decrypt({ encrypted, secret:SECRET });
+    const decrypted = decrypt({ encrypted, secretKey });
 
     expect(JSON.parse(decrypted!)).toEqual(value);
   });
 
   it('should fail to decrypt value', () => {
-    const failed = decrypt({ encrypted: 'test', secret:SECRET });
+    const secretKey = validateSecret(SECRET);
+    
+    const failed = decrypt({ encrypted: 'test', secretKey });
 
     expect(failed).toBeNull();
   });

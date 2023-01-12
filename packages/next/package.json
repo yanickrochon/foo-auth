@@ -9,8 +9,7 @@
     "clean": "rm -rf dist",
     "dev": "tsc --watch",
     "lint": "TIMING=1 eslint \"**/*.ts*\"",
-    "reset": "rm -rf node_modules",
-    "test": "jest"
+    "reset": "rm -rf node_modules"
   },
   "dependencies": {
     "@foo-auth/core": "*"

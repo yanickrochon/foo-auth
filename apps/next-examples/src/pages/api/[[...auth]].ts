@@ -1,10 +1,15 @@
 import { credentials, sessionCookie } from '@foo-auth/core';
 import fooAuthNext from '@foo-auth/next'; 
 
+import data from '../../data.json';
 
-type SessionType = {
-  user:string;
-}
+type DataArray<T> = T extends readonly (infer ElementType)[]
+  ? ElementType
+  : never;
+
+type UserData = DataArray<typeof data.users>;
+
+type SessionType = Omit<UserData, "password">;
 
 type UserCredentials = {
   username:string;
@@ -13,25 +18,49 @@ type UserCredentials = {
 
 
 
+const findUser = (predicate:(user:UserData)=>boolean) => {
+  for (const user of data.users) {
+    if (predicate(user)) {
+      return user;
+    }
+  }
+
+  return null;
+}
+
+const convertSessionType = (user:UserData|null):SessionType => {
+  const sessionValue = { ...user } as any;
+  delete sessionValue.password;
+  return sessionValue;
+}
+
+
+
+
+
 export default fooAuthNext<SessionType>({
 
   session: sessionCookie({
     encodeSession(sessionValue) {
-      return sessionValue;
+      return { id:sessionValue.id };  // save only id
     },
     decodeSession(data) {
-      return {
-        user: data.user ?? ''
-      };
+      const user = findUser(user => user.id === data.id);
+      
+      return convertSessionType(user);
     }
   }),
 
   providers: [
     credentials({
-      async authenticate(credentials:UserCredentials) {
-        return {
-          user: credentials.username
-        };
+      authenticate(credentials:UserCredentials) {
+        const user = findUser(user => user.username === credentials.username && user.password === credentials.password);
+
+        if (user) {
+          return convertSessionType(user);
+        } else {
+          return null;
+        }
       }
     })
   ],

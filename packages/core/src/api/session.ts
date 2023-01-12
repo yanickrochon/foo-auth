@@ -1,9 +1,9 @@
 
-import type { FooAuthApiRoutes, FooAuthConfigRoutePrefix } from '../internals';
+import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../internals';
 
-export function sessionRoutes<SessionType = any>(baseRoutes:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType> {
+export function sessionEndpoints<SessionType = any>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
   return {
-    [baseRoutes.session as string]: async ({ res, session }) => {
+    [endpointPath.session as string]: async ({ res, session }) => {
       const sessionToken = await session.getSessionToken();
       const sessionValue = await session.getSession();
 

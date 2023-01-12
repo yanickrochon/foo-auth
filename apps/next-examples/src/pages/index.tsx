@@ -31,7 +31,7 @@ export default function Docs() {
         <button onClick={() => {
           signInMutation.mutate({
             username: 'john@email.com',
-            password: 'password',
+            password: '123',
             csrfToken: csrfData.csrfToken
           });
         }}>

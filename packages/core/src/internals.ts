@@ -67,7 +67,7 @@ export type FooSession<SessionType> = {
 }
 
 
-export type FooAuthApiRouteOptions<SessionType> = {
+export type FooAuthEndpointOptions<SessionType> = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
   config:Omit<FooAuthConfig<SessionType>, "providers">;
@@ -76,17 +76,17 @@ export type FooAuthApiRouteOptions<SessionType> = {
   secretKey:KeyObject;
 }
 
-export type FooAuthApiRouteHandler<SessionType> = {
-  (options:FooAuthApiRouteOptions<SessionType>):void | Promise<void>;
+export type FooAuthEndpointHandler<SessionType> = {
+  (options:FooAuthEndpointOptions<SessionType>):void | Promise<void>;
 }
 
-export type FooAuthApiRoutes<SessionType> = {
-  [x:string]: FooAuthApiRouteHandler<SessionType>
+export type FooAuthEndpoints<SessionType> = {
+  [x:string]: FooAuthEndpointHandler<SessionType>
 };
 
 
 export type FooAuthProvider<SessionType> = {
-  (routePrefix:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType>;
+  (endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType>;
 }
 
 
@@ -101,7 +101,7 @@ export type FooSessionInit<SessionType> = {
   (args:FooSessionInitArg): FooSession<SessionType>;
 }
 
-export type FooAuthConfigRoutePrefix = {
+export type FooAuthEndpointsConfig = {
   signIn?:string|undefined;
   signOut?:string|undefined;
   callback?:string|undefined;
@@ -113,6 +113,6 @@ export type FooAuthConfigRoutePrefix = {
 export type FooAuthConfig<SessionType> = {
   session:FooSessionInit<SessionType>;
   providers:FooAuthProvider<SessionType>[];
-  baseRoutes?:FooAuthConfigRoutePrefix;
+  endpointPath?:FooAuthEndpointsConfig;
   secret:string;
 };

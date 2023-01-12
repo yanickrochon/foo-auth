@@ -1,3 +1,3 @@
-# Ultra Auth Core
+# Foo Auth Core
 
 Core package for Ultra Auth

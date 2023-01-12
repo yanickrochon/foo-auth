@@ -1,5 +1,5 @@
 export * from './internals';
-export * from './routes';
+export * from './endpoints';
 export * from './providers/credentials';
 export * from './session/cookie';
 export * from './encryption/csrf';

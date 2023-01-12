@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
-  getRoutes,
+  getEndpoints,
   FooAuthConfig,
   FooAuthServerAdapter,
   FooAuthApiRequest,
@@ -28,23 +28,21 @@ export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<Sess
     }  
   };
 
-  const apiRoutes = getRoutes(config);
+  const endpoints = getEndpoints(config);
 
 
   return async (_req:NextApiRequest, _res:NextApiResponse) => {
     const { auth:params = [] } = _req.query || {};
-    const routeName = (Array.isArray(params) ? `/${params.join('/')}` : params as string);
-    const routeFn = apiRoutes[routeName];
+    const path = (Array.isArray(params) ? `/${params.join('/')}` : params as string);
+    const endpoint = endpoints[path];
 
-    //console.log(routeName, apiRoutes);
-
-    if (routeFn) {
+    if (endpoint) {
       const req = server.getRequest(_req);
       const res = server.getResponse(_res);
       const cookies = server.getCookies(_req, _res);
       const session = config.session({ req, res, cookies, secretKey });
   
-      await routeFn({ req, res, config, cookies, session, secretKey });
+      await endpoint({ req, res, config, cookies, session, secretKey });
     }
 
     if (!_res.headersSent) {

@@ -1,6 +1,6 @@
 import { verifyCSRFToken } from "../encryption/csrf";
 
-import type { FooAuthConfigRoutePrefix, FooAuthApiRoutes } from "../internals";
+import type { FooAuthEndpointsConfig, FooAuthProvider } from "../internals";
 
 
 type CredentialsBase = {
@@ -9,20 +9,15 @@ type CredentialsBase = {
 
 export type CredentialsOptions<Credentials extends CredentialsBase, SessionType = any> = {
   name?:string;
-  authenticate(credentials:Credentials):PromiseLike<SessionType>;
+  authenticate(credentials:Credentials):SessionType | null | PromiseLike<SessionType | null>;
 };
 
 const DEFAULT_NAME = "credentials";
 
 
-export type FooAuthApiInitRoutes<SessionType> = {
-  (routePrefix:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType>;
-}
-
-
-export function credentials<Credentials extends CredentialsBase, SessionType>(options:CredentialsOptions<Credentials, SessionType>):FooAuthApiInitRoutes<SessionType> {
-  return (baseRoutes:FooAuthConfigRoutePrefix) => ({
-    [`${baseRoutes.signIn}/${options.name ?? DEFAULT_NAME}`]: async ({ req, res, session }) => {
+export function credentials<Credentials extends CredentialsBase, SessionType>(options:CredentialsOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
+  return (endpointPath:FooAuthEndpointsConfig) => ({
+    [`${endpointPath.signIn}/${options.name ?? DEFAULT_NAME}`]: async ({ req, res, session }) => {
       const { csrfToken, ...credentials } = req.body;
       const { redirect } = req.query;
       const token = Array.isArray(csrfToken) ? csrfToken.join('') : csrfToken as string;

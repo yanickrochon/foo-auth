@@ -1,9 +1,9 @@
 
-import type { FooAuthApiRoutes, FooAuthConfigRoutePrefix } from '../internals';
+import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../internals';
 
-export function authRoutes<SessionType = any>(baseRoutes:FooAuthConfigRoutePrefix):FooAuthApiRoutes<SessionType> {
+export function authEndpoints<SessionType = any>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
   return {
-    [baseRoutes.signOut as string]: async ({ res, session }) => {
+    [endpointPath.signOut as string]: async ({ res, session }) => {
       await session.clearSession();
 
       res.status(200).send({

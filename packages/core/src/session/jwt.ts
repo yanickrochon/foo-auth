@@ -14,6 +14,18 @@ export type FooSessionJwtConfig<SessionType> = {
 export const JWT_HEADER_NAME = 'Authorization';
 
 
+
+const getToken = (req:FooAuthApiRequest) => {
+  const token = req.headers[JWT_HEADER_NAME] as string;
+
+  if (token) {
+    return token.replace('Bearer ', '');
+  } else {
+    return undefined;
+  }
+};
+
+
 export function sessionCookie<SessionType = any>({
   issuer,
   audience,
@@ -21,16 +33,6 @@ export function sessionCookie<SessionType = any>({
   encodeSession,
   decodeSession
 }:FooSessionJwtConfig<SessionType>) {
-  const getToken = (req:FooAuthApiRequest) => {
-    const token = req.headers[JWT_HEADER_NAME] as string;
-
-    if (token) {
-      return token.replace('Bearer ', '');
-    } else {
-      return undefined;
-    }
-  };
-
   return ({ req, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
     clearSession() {
       /* nothing */
