@@ -26,12 +26,6 @@ export declare type FooAuthApiResponse<T = any> = ServerResponse & {
   redirect(statusCode: number, url: string): FooAuthApiResponse<T>;
 };
 
-export type FooAuthServerAdapter<Request, Response> = {
-  getCookies(req:Request, res:Response):Cookies;
-  getRequest(req:Request):FooAuthApiRequest;
-  getResponse(res:Response):FooAuthApiResponse;
-}
-
 
 type ClearSession = {
   ():void | PromiseLike<void>;
@@ -54,8 +48,8 @@ type SessionToken = {
 
 
 export type FooSessionConfig<SessionType> = {
-  encodeSession(sessionValue:SessionType):Partial<SessionType> | PromiseLike<Partial<SessionType>>;
-  decodeSession(data:Partial<SessionType>):SessionType | PromiseLike<SessionType>;
+  encodeSession?(sessionValue:SessionType):Partial<SessionType> | PromiseLike<Partial<SessionType>>;
+  decodeSession?(data:Partial<SessionType>):SessionType | PromiseLike<SessionType>;
 }
 
 
@@ -70,7 +64,6 @@ export type FooSession<SessionType> = {
 export type FooAuthEndpointOptions<SessionType> = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
-  config:Omit<FooAuthConfig<SessionType>, "providers">;
   cookies:Cookies;
   session:FooSession<SessionType>;
   secretKey:KeyObject;
@@ -107,12 +100,4 @@ export type FooAuthEndpointsConfig = {
   callback?:string|undefined;
   session?:string|undefined;
   csrfToken?:string|undefined;
-};
-
-
-export type FooAuthConfig<SessionType> = {
-  session:FooSessionInit<SessionType>;
-  providers:FooAuthProvider<SessionType>[];
-  endpointPath?:FooAuthEndpointsConfig;
-  secret:string;
 };

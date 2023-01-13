@@ -1,6 +1,6 @@
 import { createCSRFToken } from '../encryption/csrf';
 
-import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../internals';
+import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../types';
 
 export function csrfEndpoints<SessionType>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
   return {

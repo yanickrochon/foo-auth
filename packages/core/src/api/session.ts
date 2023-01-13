@@ -1,5 +1,5 @@
 
-import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../internals';
+import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../types';
 
 export function sessionEndpoints<SessionType = any>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
   return {

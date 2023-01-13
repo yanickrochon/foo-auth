@@ -1,6 +1,6 @@
 import { jwtEncode, jwtDecode } from '../encryption/jwt';
 
-import type { FooSessionInitArg, FooSessionConfig, FooSession, FooAuthApiRequest } from '../internals';
+import type { FooSessionInitArg, FooSessionConfig, FooSession, FooAuthApiRequest } from '../types';
 
 
 
@@ -26,12 +26,12 @@ const getToken = (req:FooAuthApiRequest) => {
 };
 
 
-export function sessionCookie<SessionType = any>({
+export function sessionJwt<SessionType = any>({
   issuer,
   audience,
   maxTokenAge,
-  encodeSession,
-  decodeSession
+  encodeSession = (x:SessionType) => x,
+  decodeSession = (x:SessionType) => x
 }:FooSessionJwtConfig<SessionType>) {
   return ({ req, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
     clearSession() {

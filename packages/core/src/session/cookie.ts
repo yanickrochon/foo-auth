@@ -1,7 +1,7 @@
 //import * as jose from 'jose';
 
 import { encrypt, decrypt } from '../encryption/string';
-import type { FooSessionInitArg, FooSession, FooSessionConfig } from '../internals';
+import type { FooSessionInitArg, FooSession, FooSessionConfig } from '../types';
 
 
 export type FooSessionCookiesConfig<SessionType> = {
@@ -10,10 +10,11 @@ export type FooSessionCookiesConfig<SessionType> = {
 
 export const DEFAULT_SESSION_COOKIE_NAME = 'foo-auth:session';
 
+
 export function sessionCookie<SessionType = any>({
   sessionName = DEFAULT_SESSION_COOKIE_NAME,
-  encodeSession,
-  decodeSession
+  encodeSession = (x:SessionType) => x,
+  decodeSession = (x:SessionType) => x
 }:FooSessionCookiesConfig<SessionType>) {
   return ({ cookies, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
     clearSession() {

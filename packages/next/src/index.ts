@@ -1,35 +1,36 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import {
+  validateSecret,
+  Cookies,
   getEndpoints,
-  FooAuthConfig,
-  FooAuthServerAdapter,
-  FooAuthApiRequest,
-  FooAuthApiResponse,
-  Cookies
+  FooSessionInit,
+  FooAuthProvider,
+  FooAuthEndpointsConfig
 } from '@foo-auth/core';
 
-import { validateSecret } from '@foo-auth/core';
+import { serverAdapter } from './server-adapter';
+
+import type { NextApiRequest, NextApiResponse } from "next";
 
 
-type NextFooAuthServerAdapter = FooAuthServerAdapter<NextApiRequest, NextApiResponse>;
+export type NextFooAuthConfig<SessionType> = {
+  session:FooSessionInit<SessionType>;
+  providers:FooAuthProvider<SessionType>[];
+  endpointPath?:FooAuthEndpointsConfig;
+  secret:string;
+};
 
-export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<SessionType>) {
-  const secretKey = validateSecret(config.secret);
 
-  const server:NextFooAuthServerAdapter = {
-    getCookies(req:NextApiRequest, res:NextApiResponse) {
-      return new Cookies(req, res);
-    },
-    getRequest(req:NextApiRequest) {
-      return req as FooAuthApiRequest;
-    },
-    getResponse(res:NextApiResponse) {
-      return res as FooAuthApiResponse;
-    }  
-  };
-
-  const endpoints = getEndpoints(config);
-
+export default function fooAuthNext<SessionType = any>({
+  session,
+  providers,
+  endpointPath,
+  secret
+}:NextFooAuthConfig<SessionType>) {
+  const secretKey = validateSecret(secret);
+  const endpoints = getEndpoints({
+    endpointPath,
+    providers
+  });
 
   return async (_req:NextApiRequest, _res:NextApiResponse) => {
     const { auth:params = [] } = _req.query || {};
@@ -37,12 +38,16 @@ export default function fooAuthNext<SessionType = any>(config:FooAuthConfig<Sess
     const endpoint = endpoints[path];
 
     if (endpoint) {
-      const req = server.getRequest(_req);
-      const res = server.getResponse(_res);
-      const cookies = server.getCookies(_req, _res);
-      const session = config.session({ req, res, cookies, secretKey });
+      const { req, res } = serverAdapter(_req, _res);
+      const cookies = new Cookies(_req, _res);
   
-      await endpoint({ req, res, config, cookies, session, secretKey });
+      await endpoint({
+        req,
+        res,
+        cookies,
+        session: session({ req, res, cookies, secretKey }),
+        secretKey
+      });
     }
 
     if (!_res.headersSent) {

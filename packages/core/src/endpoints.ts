@@ -1,8 +1,9 @@
-import type { FooAuthConfig, FooAuthEndpointsConfig } from './internals';
-
 import { authEndpoints } from './api/auth';
 import { sessionEndpoints } from './api/session';
 import { csrfEndpoints } from './api/csrf';
+
+import type { FooAuthProvider, FooAuthEndpointsConfig } from './types';
+
 
 
 const defaultBaseEndpoints:FooAuthEndpointsConfig = {
@@ -14,22 +15,32 @@ const defaultBaseEndpoints:FooAuthEndpointsConfig = {
 }
 
 
-export function getEndpoints<SessionType>(config:FooAuthConfig<SessionType>) {
-  const endpointPath = {
+
+export type GetEndpointArgs<SessionType> = {
+  endpointPath?:FooAuthEndpointsConfig;
+  providers:FooAuthProvider<SessionType>[]
+}
+
+
+export function getEndpoints<SessionType>({
+  endpointPath,
+  providers
+}:GetEndpointArgs<SessionType>) {
+  const localEndpointPath = {
     ...defaultBaseEndpoints,
-    ...config.endpointPath
+    ...endpointPath
   };
 
   const endpoints = {
-    ...authEndpoints(endpointPath),
-    ...sessionEndpoints(endpointPath),
-    ...csrfEndpoints(endpointPath)
+    ...authEndpoints(localEndpointPath),
+    ...sessionEndpoints(localEndpointPath),
+    ...csrfEndpoints(localEndpointPath)
   };
 
   // register routes
-  if (config.providers) {
-    for (const providerInit of config.providers) {
-      const provider = providerInit(endpointPath);
+  if (providers) {
+    for (const providerInit of providers) {
+      const provider = providerInit(localEndpointPath);
 
       for (const path in provider) {
         if (path in endpoints) {
