@@ -7,7 +7,7 @@ import {
   FooAuthEndpointsConfig
 } from '@foo-auth/core';
 
-import { serverAdapter } from './server-adapter';
+import { serverAdapter } from './server-adapter';
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
