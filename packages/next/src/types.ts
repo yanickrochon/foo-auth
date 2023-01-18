@@ -8,10 +8,11 @@ import type {
 export type NextFooAuthConfig<SessionType> = {
   session:FooSessionInit<SessionType>;
   providers:FooAuthProvider<SessionType>[];
-  endpointPath:FooAuthEndpoints;
+  endpointPaths:FooAuthEndpoints;
   secretKey:SecretKey;
 };
 
 export type FooAuthPageProps<SessionType> = {
   session:SessionType;
+  endpointPaths:FooAuthEndpoints;
 };

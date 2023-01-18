@@ -1,13 +1,17 @@
 import { createCSRFToken } from '../encryption/csrf';
 
-import type { FooAuthEndpointHandlers, FooAuthEndpoints } from '../types';
+import type {
+  FooAuthEndpointHandlers,
+  FooAuthEndpoints,
+  //FooAuthApiCsrfTokenResponse
+} from '../types';
 
-export function csrfEndpoints<SessionType>(endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
+export function csrfEndpoints<SessionType>({ csrfToken }:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
   return {
-    [endpointPath.csrfToken as string]: ({ res }) => {
+    [csrfToken]: ({ res }) => {
       const csrfToken = createCSRFToken();
 
-      res.status(200).send({ csrfToken });
+      res.status(200).send({ csrfToken } as any);
     }
   }
 }

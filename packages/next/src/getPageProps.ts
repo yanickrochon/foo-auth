@@ -14,7 +14,7 @@ type GetPagePropsArg<SessionType> = {
 
 type GetPageProps<SessionType> = {
   session:SessionType | null;
-  endpointsPath:FooAuthEndpoints;
+  endpointPaths:FooAuthEndpoints;
 }
 
 export async function getPageProps<SessionType>({ req:_req, res:_res, config }:GetPagePropsArg<SessionType>):Promise<GetPageProps<SessionType>> {
@@ -29,7 +29,7 @@ export async function getPageProps<SessionType>({ req:_req, res:_res, config }:G
 
   return {
     session: await session.getSession(),
-    endpointsPath:config.endpointPath,
+    endpointPaths:config.endpointPaths,
   };
 }
 

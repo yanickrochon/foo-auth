@@ -8,26 +8,26 @@ import type { FooAuthProvider, FooAuthEndpoints } from './types';
 
 
 export type GetEndpointArgs<SessionType> = {
-  endpointPath:FooAuthEndpoints;
+  endpointPaths:FooAuthEndpoints;
   providers:FooAuthProvider<SessionType>[]
 }
 
 
 export function getEndpoints<SessionType>({
-  endpointPath,
+  endpointPaths,
   providers
 }:GetEndpointArgs<SessionType>) {
 
   const endpoints = {
-    ...authEndpoints(endpointPath),
-    ...sessionEndpoints(endpointPath),
-    ...csrfEndpoints(endpointPath)
+    ...authEndpoints(endpointPaths),
+    ...sessionEndpoints(endpointPaths),
+    ...csrfEndpoints(endpointPaths)
   };
 
   // register routes
   if (providers) {
     for (const providerInit of providers) {
-      const provider = providerInit(endpointPath);
+      const provider = providerInit(endpointPaths);
 
       for (const path in provider) {
         if (path in endpoints) {

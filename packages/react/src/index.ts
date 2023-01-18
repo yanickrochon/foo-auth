@@ -1,3 +1,4 @@
 export * from './SessionProvider';
-export * from './useSession';
+export * from './hooks';
 export * from './useOnline';
+export * from './types';

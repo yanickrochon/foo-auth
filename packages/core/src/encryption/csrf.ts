@@ -52,8 +52,12 @@ export function createCSRFToken():CSRFToken {
 export function verifyCSRFToken({
   token
 }: VerifyCSRFTokenArg):CSRFTokenVerified {
-  const [ signature, tokenHash ] = token?.split(TOKEN_SEPARATOR) ?? [];
-  const tokenHashVerify = createCSRFTokenHash(signature);
+  if (token) {
+    const [ signature, tokenHash ] = token?.split(TOKEN_SEPARATOR) ?? [];
+    const tokenHashVerify = createCSRFTokenHash(signature);
 
-  return tokenHashVerify === tokenHash;
+    return tokenHashVerify === tokenHash;
+  } else {
+    return false;
+  }
 }

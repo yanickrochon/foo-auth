@@ -12,11 +12,11 @@ import type { NextFooAuthConfig } from './types';
 export function fooAuthNext<SessionType = any>({
   session,
   providers,
-  endpointPath,
+  endpointPaths,
   secretKey
 }:NextFooAuthConfig<SessionType>) {
   const endpoints = getEndpoints({
-    endpointPath,
+    endpointPaths,
     providers
   });
 
@@ -33,7 +33,7 @@ export function fooAuthNext<SessionType = any>({
         req,
         res,
         cookies,
-        session: session({ req, res, cookies, secretKey }),
+        session: session({ req, res, cookies, secretKey }) as any,
         secretKey
       });
     }

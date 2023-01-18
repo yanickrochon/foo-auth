@@ -12,13 +12,11 @@ import {
   getEndpoints,
   Cookies,
   sessionCookie,
-  sessionJwt
-} from '@foo-auth/core';
+  sessionJwt,
 
-import type {
-  FooAuthApiRequest,
-  FooAuthApiResponse,
-  FooAuthProvider
+  type FooAuthApiRequest,
+  type FooAuthApiResponse,
+  type FooAuthProvider,
 } from '@foo-auth/core';
 
 import type { IncomingMessage, ServerResponse } from 'http';
@@ -29,7 +27,7 @@ type SessionType = {
   username:string;
 }
 
-type UserCredentials = {
+interface UserCredentials {
   username:string;
 }
 

@@ -3,11 +3,7 @@ import { verifyCSRFToken } from "../encryption/csrf";
 import type { FooAuthEndpoints, FooAuthProvider } from "../types";
 
 
-type CredentialsBase = {
-  [key:string]: string;
-}
-
-export type CredentialsOptions<Credentials extends CredentialsBase, SessionType = any> = {
+export type CredentialsOptions<Credentials, SessionType = any> = {
   name?:string;
   authenticate(credentials:Credentials):SessionType | null | PromiseLike<SessionType | null>;
 };
@@ -15,7 +11,7 @@ export type CredentialsOptions<Credentials extends CredentialsBase, SessionType 
 const DEFAULT_NAME = "credentials";
 
 
-export function credentials<Credentials extends CredentialsBase, SessionType>({
+export function credentials<Credentials, SessionType>({
   name = DEFAULT_NAME,
   authenticate
 }:CredentialsOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
@@ -38,7 +34,7 @@ export function credentials<Credentials extends CredentialsBase, SessionType>({
               success: true,
               session: sessionValue,
               token
-            });
+            } as any);
           }
         } else {
           res.status(403).end();

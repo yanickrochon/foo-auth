@@ -1,7 +1,7 @@
 import type { FooAuthEndpoints } from '@foo-auth/core';
 
 
-export const endpointPath:FooAuthEndpoints = {
+export const endpointPaths:FooAuthEndpoints = {
   callback: '/callback',
   csrfToken: '/csrf-token',
   session: '/session',

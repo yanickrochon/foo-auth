@@ -1,14 +1,26 @@
+import { verifyCSRFToken } from "../encryption/csrf";
 
-import type { FooAuthEndpointHandlers, FooAuthEndpoints } from '../types';
+import type {
+  FooAuthEndpointHandlers,
+  FooAuthEndpoints,
+  //FooAuthApiSignOutResponse
+} from '../types';
 
-export function authEndpoints<SessionType = any>(endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
+export function authEndpoints<SessionType = any>({ signOut }:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
   return {
-    [endpointPath.signOut as string]: async ({ res, session }) => {
-      await session.clearSession();
+    [signOut]: async ({ req, res, session }) => {
+      const { csrfToken } = req.body;
+      const token = Array.isArray(csrfToken) ? csrfToken.join('') : csrfToken as string;
 
-      res.status(200).send({
-        success:true
-      });  
+      if (verifyCSRFToken({ token })) {
+        await session.clearSession();
+
+        res.status(200).send({
+          success:true
+        } as any);  
+      } else {
+        res.status(401).end();
+      }
     }
   }
 }

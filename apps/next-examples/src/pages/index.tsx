@@ -1,10 +1,15 @@
 
-import type { GetServerSideProps } from 'next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getCsrfTokenQuery, getSessionQuery, postSignInQuery, postSignOutQuery } from '../routes';
+//import { getCsrfTokenQuery, getSessionQuery, postSignInQuery, postSignOutQuery } from '../routes';
 
 import { getPageProps } from '@foo-auth/next';
-import { fooAuthConfig } from './api/[[...auth]]';
+import { fooAuthConfig, type UserCredentials } from './api/[[...auth]]';
+
+import type { GetServerSideProps } from 'next';
+import type { SyntheticEvent } from 'react';
+
+
+import { useSessionQueries } from '@foo-auth/react';
 
 
 export const getServerSideProps:GetServerSideProps = async ({ req, res }) => {
@@ -18,40 +23,70 @@ export const getServerSideProps:GetServerSideProps = async ({ req, res }) => {
 
 export default function IndexPage() {
   const queryClient = useQueryClient();
+  const { 
+    csrfTokenQuery,
+    sessionQuery,
+    signInMutation,
+    signOutMutation
+  } = useSessionQueries();
 
-  const { data:csrfData } = useQuery(['csrf'], getCsrfTokenQuery, { refetchOnWindowFocus:false });
-  const { data:sessionData } = useQuery(['session'], getSessionQuery, { refetchOnWindowFocus:false });
+  const { data:csrfData } = useQuery(['csrf'], async () => {
+    const foo = csrfTokenQuery();
+  }, {
+    refetchOnWindowFocus:false
+  });
+  const { data:sessionData } = useQuery(['session'], async () => {}, {
+    refetchOnWindowFocus:false
+  });
 
-  const signInMutation = useMutation(postSignInQuery, {
+  const handleSignIn = useMutation(async () => {}, {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
     },
   });
 
-  const signOutMutation = useMutation(postSignOutQuery, {
+  const handleSignOut = useMutation(async () => {}, {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
     }
-  })
+  });
+
+
+  const handleSubmit = (e:SyntheticEvent) => {
+    e.preventDefault();
+    const data = new FormData(e.target as HTMLFormElement);
+
+    console.log( Object.fromEntries(data.entries()) );
+  };
+
 
   return (
     <div>
       <h1>Next Example</h1>
 
+      <form onSubmit={ handleSubmit }>
+        <input type="text" name="username" />
+        <input type="password" name="password" />
+        <input type="hidden" name="csrfToken" />
+        <button type="submit">Sign In</button>
+      </form>
+
+
+
       <div>
         <button onClick={() => {
-          signInMutation.mutate({
-            username: 'john@email.com',
-            password: '123',
-            csrfToken: csrfData.csrfToken
-          });
+          // signInMutation.mutate({
+          //   username: 'john@email.com',
+          //   password: '123',
+          //   csrfToken: csrfData.csrfToken
+          // });
         }}>
           Login
         </button>
         <button onClick={() => {
-          signOutMutation.mutate();
+          //signOutMutation.mutate();
         }}>
           Logout
         </button>

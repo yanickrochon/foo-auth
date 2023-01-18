@@ -3,9 +3,13 @@ import {
   type NextFooAuthConfig
 } from '@foo-auth/next'; 
 
-import { credentials, sessionCookie, createSecretKey } from '@foo-auth/core';
+import {
+  credentials,
+  sessionCookie,
+  createSecretKey,
+} from '@foo-auth/core';
 
-import { endpointPath, secret } from '../../../foo-auth.config';
+import { endpointPaths, secret } from '../../../foo-auth.config';
 
 import data from '../../data.json';
 
@@ -18,7 +22,7 @@ export type UserData = DataArray<typeof data.users>;
 
 export type SessionType = Omit<UserData, "password">;
 
-export type UserCredentials = {
+export interface UserCredentials {
   username:string;
   password:string;
 };
@@ -44,9 +48,8 @@ export const convertSessionType = (user:UserData|null):SessionType => {
 
 
 
-
 export const fooAuthConfig:NextFooAuthConfig<SessionType> = {
-  endpointPath,
+  endpointPaths,
 
   session: sessionCookie({
     encodeSession(sessionValue) {
