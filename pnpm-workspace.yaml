@@ -1,0 +1,7 @@
+packages:
+  - apps/next-examples
+  - packages/config/eslint-custom
+  - packages/config/tsconfig
+  - packages/core
+  - packages/next
+  - packages/react

@@ -6,14 +6,14 @@ export type SignInInput = {
 }
 
 
-export const getCsrfToken = async () => fetch('/api/csrf-token', {
+export const getCsrfTokenQuery = async () => fetch('/api/csrf-token', {
   method:"GET",
   headers: {
     "Accept": "application/json",
   }
 }).then(response => response.json());
 
-export const getSession = async () => fetch('/api/session', {
+export const getSessionQuery = async () => fetch('/api/session', {
   method:"GET",
   headers: {
     "Accept": "application/json",
@@ -21,7 +21,7 @@ export const getSession = async () => fetch('/api/session', {
 }).then(response => response.json());
 
 
-export const postSignIn = async (payload:SignInInput) => fetch('/api/sign-in/credentials', {
+export const postSignInQuery = async (payload:SignInInput) => fetch('/api/sign-in/credentials', {
   method:"POST",
   headers: {
     "Accept": "application/json",
@@ -30,7 +30,7 @@ export const postSignIn = async (payload:SignInInput) => fetch('/api/sign-in/cre
   body: JSON.stringify(payload)
 }).then(response => response.json());
 
-export const postSignOut = async () => fetch('/api/sign-out', {
+export const postSignOutQuery = async () => fetch('/api/sign-out', {
   method: 'POST',
   headers: {
     "Accept": "application/json"

@@ -1,12 +1,12 @@
 //import * as jose from 'jose';
 
-import { encrypt, decrypt } from '../encryption/string';
-import type { FooSessionInitArg, FooSession, FooSessionConfig } from '../types';
+import { encryptString, decryptString } from '../encryption/string';
+import type { FooAuthSessionInitArg, FooAuthSession, FooAuthSessionConfig } from '../types';
 
 
 export type FooSessionCookiesConfig<SessionType> = {
   sessionName?:string;
-} & FooSessionConfig<SessionType>;
+} & FooAuthSessionConfig<SessionType>;
 
 export const DEFAULT_SESSION_COOKIE_NAME = 'foo-auth:session';
 
@@ -16,7 +16,7 @@ export function sessionCookie<SessionType = any>({
   encodeSession = (x:SessionType) => x,
   decodeSession = (x:SessionType) => x
 }:FooSessionCookiesConfig<SessionType>) {
-  return ({ cookies, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
+  return ({ cookies, secretKey }:FooAuthSessionInitArg):FooAuthSession<SessionType> => ({
     clearSession() {
       cookies.set(sessionName, null);
     },
@@ -29,7 +29,7 @@ export function sessionCookie<SessionType = any>({
       const encrypted = cookies.get(sessionName) ?? '';
 
       try {
-        const decrypted = decrypt({ encrypted, secretKey })
+        const decrypted = decryptString({ encrypted, secretKey })
 
         if (decrypted) {
           const payload = await decodeSession(JSON.parse(decrypted));
@@ -45,7 +45,7 @@ export function sessionCookie<SessionType = any>({
 
     async setSession(payload) {
       const data = await encodeSession(payload);
-      const encrypted = encrypt({
+      const encrypted = encryptString({
         text: JSON.stringify(data),
         secretKey
       });

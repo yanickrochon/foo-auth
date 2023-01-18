@@ -1,7 +1,7 @@
 
-import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../types';
+import type { FooAuthEndpointHandlers, FooAuthEndpoints } from '../types';
 
-export function authEndpoints<SessionType = any>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
+export function authEndpoints<SessionType = any>(endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
   return {
     [endpointPath.signOut as string]: async ({ res, session }) => {
       await session.clearSession();

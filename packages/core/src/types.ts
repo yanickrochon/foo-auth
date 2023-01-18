@@ -26,6 +26,8 @@ export declare type FooAuthApiResponse<T = any> = ServerResponse & {
   redirect(statusCode: number, url: string): FooAuthApiResponse<T>;
 };
 
+export type SecretKey = KeyObject;
+
 
 type ClearSession = {
   ():void | PromiseLike<void>;
@@ -47,13 +49,13 @@ type SessionToken = {
 }
 
 
-export type FooSessionConfig<SessionType> = {
+export type FooAuthSessionConfig<SessionType> = {
   encodeSession?(sessionValue:SessionType):Partial<SessionType> | PromiseLike<Partial<SessionType>>;
   decodeSession?(data:Partial<SessionType>):SessionType | PromiseLike<SessionType>;
 }
 
 
-export type FooSession<SessionType> = {
+export type FooAuthSession<SessionType> = {
   clearSession:ClearSession;
   getSession:GetSession<SessionType>;
   getSessionToken:SessionToken;
@@ -65,39 +67,39 @@ export type FooAuthEndpointOptions<SessionType> = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
   cookies:Cookies;
-  session:FooSession<SessionType>;
-  secretKey:KeyObject;
+  session:FooAuthSession<SessionType>;
+  secretKey:SecretKey;
 }
 
 export type FooAuthEndpointHandler<SessionType> = {
   (options:FooAuthEndpointOptions<SessionType>):void | Promise<void>;
 }
 
-export type FooAuthEndpoints<SessionType> = {
+export type FooAuthEndpointHandlers<SessionType> = {
   [x:string]: FooAuthEndpointHandler<SessionType>
 };
 
 
 export type FooAuthProvider<SessionType> = {
-  (endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType>;
+  (endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType>;
 }
 
 
-export type FooSessionInitArg = {
+export type FooAuthSessionInitArg = {
   req:FooAuthApiRequest;
   res:FooAuthApiResponse;
   cookies:Cookies;
-  secretKey:KeyObject;
+  secretKey:SecretKey;
 }
 
 export type FooSessionInit<SessionType> = {
-  (args:FooSessionInitArg): FooSession<SessionType>;
+  (args:FooAuthSessionInitArg): FooAuthSession<SessionType>;
 }
 
-export type FooAuthEndpointsConfig = {
-  signIn?:string|undefined;
-  signOut?:string|undefined;
-  callback?:string|undefined;
-  session?:string|undefined;
-  csrfToken?:string|undefined;
+export type FooAuthEndpoints = {
+  signIn:string;
+  signOut:string;
+  callback:string;
+  session:string;
+  csrfToken:string;
 };

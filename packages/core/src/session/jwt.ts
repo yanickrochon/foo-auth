@@ -1,6 +1,6 @@
 import { jwtEncode, jwtDecode } from '../encryption/jwt';
 
-import type { FooSessionInitArg, FooSessionConfig, FooSession, FooAuthApiRequest } from '../types';
+import type { FooAuthSessionInitArg, FooAuthSessionConfig, FooAuthSession, FooAuthApiRequest } from '../types';
 
 
 
@@ -8,7 +8,7 @@ export type FooSessionJwtConfig<SessionType> = {
   issuer:string;
   audience:string;
   maxTokenAge:string;
-} & FooSessionConfig<SessionType>;
+} & FooAuthSessionConfig<SessionType>;
 
 
 export const JWT_HEADER_NAME = 'Authorization';
@@ -33,7 +33,7 @@ export function sessionJwt<SessionType = any>({
   encodeSession = (x:SessionType) => x,
   decodeSession = (x:SessionType) => x
 }:FooSessionJwtConfig<SessionType>) {
-  return ({ req, secretKey }:FooSessionInitArg):FooSession<SessionType> => ({
+  return ({ req, secretKey }:FooAuthSessionInitArg):FooAuthSession<SessionType> => ({
     clearSession() {
       /* nothing */
     },

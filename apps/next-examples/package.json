@@ -1,16 +1,16 @@
 {
-  "name": "@foo-auth/examples",
+  "name": "@foo-auth/next-examples",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3600",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "reset": "rm -rf node_modules .next"
+    "lint": "next lint"
   },
   "dependencies": {
     "@foo-auth/core": "*",
     "@foo-auth/next": "*",
+    "@foo-auth/react": "*",
     "next": "^13.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

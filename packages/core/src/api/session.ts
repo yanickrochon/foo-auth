@@ -1,7 +1,7 @@
 
-import type { FooAuthEndpoints, FooAuthEndpointsConfig } from '../types';
+import type { FooAuthEndpointHandlers, FooAuthEndpoints } from '../types';
 
-export function sessionEndpoints<SessionType = any>(endpointPath:FooAuthEndpointsConfig):FooAuthEndpoints<SessionType> {
+export function sessionEndpoints<SessionType = any>(endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
   return {
     [endpointPath.session as string]: async ({ res, session }) => {
       const sessionToken = await session.getSessionToken();

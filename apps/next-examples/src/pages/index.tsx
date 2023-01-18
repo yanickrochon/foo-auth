@@ -1,22 +1,35 @@
 
+import type { GetServerSideProps } from 'next';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getCsrfToken, getSession, postSignIn, postSignOut } from '../routes';
+import { getCsrfTokenQuery, getSessionQuery, postSignInQuery, postSignOutQuery } from '../routes';
+
+import { getPageProps } from '@foo-auth/next';
+import { fooAuthConfig } from './api/[[...auth]]';
 
 
-export default function Docs() {
+export const getServerSideProps:GetServerSideProps = async ({ req, res }) => {
+  return {
+    props: {
+      ...await getPageProps({ req, res, config:fooAuthConfig })
+    }
+  }
+};
+
+
+export default function IndexPage() {
   const queryClient = useQueryClient();
 
-  const { data:csrfData } = useQuery(['csrf'], getCsrfToken, { refetchOnWindowFocus:false });
-  const { data:sessionData } = useQuery(['session'], getSession, { refetchOnWindowFocus:false });
+  const { data:csrfData } = useQuery(['csrf'], getCsrfTokenQuery, { refetchOnWindowFocus:false });
+  const { data:sessionData } = useQuery(['session'], getSessionQuery, { refetchOnWindowFocus:false });
 
-  const signInMutation = useMutation(postSignIn, {
+  const signInMutation = useMutation(postSignInQuery, {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
     },
   });
 
-  const signOutMutation = useMutation(postSignOut, {
+  const signOutMutation = useMutation(postSignOutQuery, {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
@@ -25,7 +38,7 @@ export default function Docs() {
 
   return (
     <div>
-      <h1>Docs</h1>
+      <h1>Next Example</h1>
 
       <div>
         <button onClick={() => {

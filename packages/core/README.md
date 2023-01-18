@@ -8,7 +8,7 @@ Core package for Foo Auth
 
 ```ts
 import {
-  validateSecret,
+  createSecretKey,
   getEndpoints,
   Cookies,
   sessionCookie,
@@ -36,7 +36,7 @@ type UserCredentials = {
 
 
 // 1. Create secret key
-const secretKey = validateSecret('secret (must be at least 32 bytes long)');
+const secretKey = createSecretKey('secret (must be at least 32 bytes long)');
 
 
 // 2. Create session 

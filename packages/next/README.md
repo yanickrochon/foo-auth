@@ -1,4 +1,4 @@
-# Foo Auth Next Adapter
+# Foo Auth Next.js Adapter
 
 ## Install
 
@@ -15,13 +15,23 @@ $ pnpm i @foo-auth/core @foo-auth/next
 ```ts
 // ./src/pages/api/[[...auth]].ts
 
-import { credentials, sessionCookie } from '@foo-auth/core';
-import fooAuthNext from '@foo-auth/next'; 
+import { credentials, sessionCookie, createSecretKey } from '@foo-auth/core';
+import {
+  fooAuthNext,
+  type NextFooAuthConfig
+} from '@foo-auth/next'; 
 
 import type { UserType, UserCredentials } from '../../types';
 
 
-export default fooAuthNext<UserType>({
+export const config:NextFooAuthConfig<UserType> = {
+  endpointPath: {
+    callback: '/callback',
+    csrfToken: '/csrf-token',
+    session: '/session',
+    signIn: '/sign-in',
+    signOut: '/sign-out',
+  },
 
   session: sessionCookie({
     encodeSession({ id }) {
@@ -48,6 +58,8 @@ export default fooAuthNext<UserType>({
     })
   ],
   
-  secret: '0c6136daeb78f8cd5cdc1eb963c3f83c5209494c2130b9cf9ab5e019146f0c1e'
-});
+  secretKey: createSecretKey('0c6136daeb78f8cd5cdc1eb963c3f83c5209494c2130b9cf9ab5e019146f0c1e')
+};
+
+export default fooAuthNext(config);
 ```

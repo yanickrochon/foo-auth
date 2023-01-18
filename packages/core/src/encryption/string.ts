@@ -1,5 +1,10 @@
-import { createSecretKey, randomBytes, createCipheriv, createDecipheriv } from "crypto";
-import type { KeyObject } from 'crypto';
+import { 
+  createSecretKey as _createSecretKey,
+  randomBytes,
+  createCipheriv,
+  createDecipheriv
+} from "crypto";
+import type { SecretKey } from '../types';
 
 const ALGORITHM = "aes-256-cbc";
 const KEY_LENGTH = 32;
@@ -13,14 +18,14 @@ const SECRET_MIN_LENGTH = 32;
 
 export interface EncryptionArg {
   text:string;
-  secretKey:KeyObject;
+  secretKey:SecretKey;
 };
 
 export type EntryptionValue = string;
 
 export interface DecryptionArg {
   encrypted:string;
-  secretKey:KeyObject;
+  secretKey:SecretKey;
 };
 
 export type DecryptionValue = string | null;
@@ -30,12 +35,12 @@ export type DecryptionValue = string | null;
  * Make sure the secret key is valid
  * @param secret 
  */
-export function validateSecret(secret:string) {
+export function createSecretKey(secret:string):SecretKey {
   if (secret.length < SECRET_MIN_LENGTH) {
     throw new Error(`Secret must be at least ${SECRET_MIN_LENGTH} characters`);
   } 
 
-  return createSecretKey(secret.substring(0, KEY_LENGTH), TEXT_ENCODING);
+  return _createSecretKey(secret.substring(0, KEY_LENGTH), TEXT_ENCODING);
 }
 
 
@@ -45,7 +50,7 @@ export function validateSecret(secret:string) {
  * The resulted value consists of the public key, followed by the encrypted data,
  * separated by a semicolon.
  */
-export function encrypt({ text, secretKey }:EncryptionArg):EntryptionValue {
+export function encryptString({ text, secretKey }:EncryptionArg):EntryptionValue {
   const iv = randomBytes(IV_LENGTH);
   const cipher = createCipheriv(ALGORITHM, secretKey, iv);
   return Buffer.concat([cipher.update(text,), cipher.final(), iv]).toString(TOKEN_ENCODING);
@@ -57,7 +62,7 @@ export function encrypt({ text, secretKey }:EncryptionArg):EntryptionValue {
  * encrypt function, only the first 32 bytes of the secret will be used. If
  * the encrypted value cannot be decrypted, the function will return null.
  */
-export function decrypt({ encrypted, secretKey }:DecryptionArg):DecryptionValue {
+export function decryptString({ encrypted, secretKey }:DecryptionArg):DecryptionValue {
   try {
     const binaryData = Buffer.from(encrypted, TOKEN_ENCODING);
     const iv = binaryData.subarray(-IV_LENGTH);

@@ -1,24 +1,30 @@
-import { credentials, sessionCookie } from '@foo-auth/core';
-import fooAuthNext from '@foo-auth/next'; 
+import {
+  fooAuthNext,
+  type NextFooAuthConfig
+} from '@foo-auth/next'; 
+
+import { credentials, sessionCookie, createSecretKey } from '@foo-auth/core';
+
+import { endpointPath, secret } from '../../../foo-auth.config';
 
 import data from '../../data.json';
+
 
 type DataArray<T> = T extends readonly (infer ElementType)[]
   ? ElementType
   : never;
 
-type UserData = DataArray<typeof data.users>;
+export type UserData = DataArray<typeof data.users>;
 
-type SessionType = Omit<UserData, "password">;
+export type SessionType = Omit<UserData, "password">;
 
-type UserCredentials = {
+export type UserCredentials = {
   username:string;
   password:string;
 };
 
 
-
-const findUser = (predicate:(user:UserData)=>boolean) => {
+export const findUser = (predicate:(user:UserData)=>boolean) => {
   for (const user of data.users) {
     if (predicate(user)) {
       return user;
@@ -28,7 +34,9 @@ const findUser = (predicate:(user:UserData)=>boolean) => {
   return null;
 }
 
-const convertSessionType = (user:UserData|null):SessionType => {
+
+
+export const convertSessionType = (user:UserData|null):SessionType => {
   const sessionValue = { ...user } as any;
   delete sessionValue.password;
   return sessionValue;
@@ -37,8 +45,8 @@ const convertSessionType = (user:UserData|null):SessionType => {
 
 
 
-
-export default fooAuthNext<SessionType>({
+export const fooAuthConfig:NextFooAuthConfig<SessionType> = {
+  endpointPath,
 
   session: sessionCookie({
     encodeSession(sessionValue) {
@@ -50,12 +58,12 @@ export default fooAuthNext<SessionType>({
       return convertSessionType(user);
     }
   }),
-
+  
   providers: [
     credentials({
       authenticate(credentials:UserCredentials) {
         const user = findUser(user => user.username === credentials.username && user.password === credentials.password);
-
+  
         if (user) {
           return convertSessionType(user);
         } else {
@@ -64,6 +72,9 @@ export default fooAuthNext<SessionType>({
       }
     })
   ],
-  
-  secret: '0c6136daeb78f8cd5cdc1eb963c3f83c5209494c2130b9cf9ab5e019146f0c1e'
-});
+
+  secretKey: createSecretKey(secret)
+};
+
+
+export default fooAuthNext(fooAuthConfig);

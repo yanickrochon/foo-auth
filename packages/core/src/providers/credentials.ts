@@ -1,6 +1,6 @@
 import { verifyCSRFToken } from "../encryption/csrf";
 
-import type { FooAuthEndpointsConfig, FooAuthProvider } from "../types";
+import type { FooAuthEndpoints, FooAuthProvider } from "../types";
 
 
 type CredentialsBase = {
@@ -19,7 +19,7 @@ export function credentials<Credentials extends CredentialsBase, SessionType>({
   name = DEFAULT_NAME,
   authenticate
 }:CredentialsOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
-  return (endpointPath:FooAuthEndpointsConfig) => ({
+  return (endpointPath:FooAuthEndpoints) => ({
     [`${endpointPath.signIn}/${name}`]: async ({ req, res, session }) => {
       const { csrfToken, ...credentials } = req.body;
       const { redirect } = req.query;

@@ -11,9 +11,6 @@
     "dev": {
       "cache": false
     },
-    "reset": {
-      "cache": false
-    },
     "test": {
       "cache": false
     }
