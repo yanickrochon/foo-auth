@@ -1,17 +1,25 @@
 import type {
-    FooAuthApiRequestValidation,
     FooAuthEndpoints,
-    FooAuthApiCsrfTokenResponse,
-    FooAuthApiSignOutResponse,
-    FooAuthApiSessionResponse
+//     FooAuthApiCsrfTokenQuery,
+//     FooAuthApiSignOutQuery,
+//     FooAuthApiSessionQuery,
+//     FooAuthApiSignInMutation
 } from '@foo-auth/core';
 
+import type {
+    GetCsrfTokenQuery,
+    GetSessionQuery,
+    GetSignInMutation,
+    GetSignOutMutation
+} from './types';
 
 
-const basePath = process.env.FOO_AUTH_API_BASE_PATH ?? '';
 
 
-export const getCsrfTokenQuery = ({ csrfToken }:FooAuthEndpoints) => async ():Promise<FooAuthApiCsrfTokenResponse> => 
+const basePath = process.env.NEXT_PUBLIC_FOO_AUTH_API_BASE_PATH ?? '';
+
+
+export const getCsrfTokenQuery = ({ csrfToken }:FooAuthEndpoints):GetCsrfTokenQuery => async () => 
     fetch(`${basePath}${csrfToken}`, {
         method:"GET",
         headers: {
@@ -19,17 +27,17 @@ export const getCsrfTokenQuery = ({ csrfToken }:FooAuthEndpoints) => async ():Pr
         }
     }).then(response => response.json());
   
-  export const getSessionQuery = ({ session }:FooAuthEndpoints) => async <SessionType> ():Promise<FooAuthApiSessionResponse<SessionType>> => 
+export const getSessionQuery = <SessionType> ({ session }:FooAuthEndpoints):GetSessionQuery<SessionType> => async () => 
     fetch(`${basePath}${session}`, {
         method:"GET",
         headers: {
         "Accept": "application/json",
         }
     }).then(response => response.json());
-  
-  
-  export const getSignInMutation = <Credential> ({ signIn }:FooAuthEndpoints) => async <SessionType> (providerName:string, payload:(Credential & FooAuthApiRequestValidation)):Promise<FooAuthApiSessionResponse<SessionType>> => 
-    fetch(`${basePath}${signIn}${providerName}`, {
+
+
+export const getSignInMutation = <SessionType> ({ signIn }:FooAuthEndpoints):GetSignInMutation<SessionType> => async ({ providerName, payload }) => 
+    fetch(`${basePath}${signIn}/${providerName}`, {
         method:"POST",
         headers: {
             "Accept": "application/json",
@@ -37,12 +45,13 @@ export const getCsrfTokenQuery = ({ csrfToken }:FooAuthEndpoints) => async ():Pr
         },
         body: JSON.stringify(payload)
     }).then(response => response.json());
-  
-  export const getSignOutMutation = ({ signOut }:FooAuthEndpoints) => async (payload:FooAuthApiRequestValidation):Promise<FooAuthApiSignOutResponse> => 
+
+export const getSignOutMutation = ({ signOut }:FooAuthEndpoints):GetSignOutMutation => async ({ payload }) => 
     fetch(`${basePath}${signOut}`, {
         method: 'POST',
         headers: {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
     }).then(response => response.json());

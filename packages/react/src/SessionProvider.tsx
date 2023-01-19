@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { SessionProviderContext } from './session-context';
 
-
 import {
   getCsrfTokenQuery,
   getSessionQuery,
@@ -12,7 +11,10 @@ import {
 
 import type { FooAuthEndpoints } from '@foo-auth/core';
 
-import type { SessionProviderContextValue } from './types';
+import type { 
+  SessionProviderContextValue,
+  SessionProviderQueries,
+} from './types';
 
 
 export type SessionProviderProps<SessionType> = {
@@ -22,23 +24,31 @@ export type SessionProviderProps<SessionType> = {
   children: React.ReactNode;
 };
 
+
+const dummyQueries:SessionProviderQueries<any> = {
+  async csrfTokenQuery() { return { csrfToken:'' }; },
+  async sessionQuery() { return { success:true, token:'', session:null }; },
+  async signInMutation() { return { success:true, token:'', session:null }; },
+  async signOutMutation() { return { success:true }; },
+}
+
 export const SessionProvider = <SessionType extends unknown> ({
   endpointPaths,
   session:initialSession  = null,
   sessionRef,
   children
 }:SessionProviderProps<SessionType>) => {
-  const [ session, setSession ] = React.useState(initialSession);
+  const [ session, setSession ] = React.useState<SessionType|null>(initialSession);
 
-  const contextValue:SessionProviderContextValue = {
+  const contextValue:SessionProviderContextValue<SessionType> = {
     session,
     setSession,
-    queries: {
+    queries: endpointPaths ? {
       csrfTokenQuery: getCsrfTokenQuery(endpointPaths),
       sessionQuery: getSessionQuery(endpointPaths),
       signInMutation: getSignInMutation(endpointPaths),
       signOutMutation: getSignOutMutation(endpointPaths),
-    }
+    } : dummyQueries
   };
 
   React.useImperativeHandle(sessionRef, () => contextValue, [contextValue]);

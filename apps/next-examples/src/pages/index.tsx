@@ -3,13 +3,15 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 //import { getCsrfTokenQuery, getSessionQuery, postSignInQuery, postSignOutQuery } from '../routes';
 
 import { getPageProps } from '@foo-auth/next';
-import { fooAuthConfig, type UserCredentials } from './api/[[...auth]]';
+import { fooAuthConfig, type UserCredentials, type SessionType } from './api/[[...auth]]';
 
 import type { GetServerSideProps } from 'next';
 import type { SyntheticEvent } from 'react';
 
-
-import { useSessionQueries } from '@foo-auth/react';
+import {
+  useSessionQueries,
+  type GetSignInMutationOptions,
+} from '@foo-auth/react';
 
 
 export const getServerSideProps:GetServerSideProps = async ({ req, res }) => {
@@ -28,25 +30,23 @@ export default function IndexPage() {
     sessionQuery,
     signInMutation,
     signOutMutation
-  } = useSessionQueries();
+  } = useSessionQueries<SessionType>();
 
-  const { data:csrfData } = useQuery(['csrf'], async () => {
-    const foo = csrfTokenQuery();
-  }, {
+  const { data:csrfData } = useQuery(['csrf'], csrfTokenQuery, {
     refetchOnWindowFocus:false
   });
-  const { data:sessionData } = useQuery(['session'], async () => {}, {
+  const { data:sessionData } = useQuery(['session'], sessionQuery, {
     refetchOnWindowFocus:false
   });
 
-  const handleSignIn = useMutation(async () => {}, {
+  const handleSignIn = useMutation(async (options:GetSignInMutationOptions<UserCredentials>) => signInMutation(options), {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
     },
   });
 
-  const handleSignOut = useMutation(async () => {}, {
+  const handleSignOut = useMutation(signOutMutation, {
     onSuccess: () => {
       // Invalidate session
       queryClient.invalidateQueries('session');
@@ -77,16 +77,23 @@ export default function IndexPage() {
 
       <div>
         <button onClick={() => {
-          // signInMutation.mutate({
-          //   username: 'john@email.com',
-          //   password: '123',
-          //   csrfToken: csrfData.csrfToken
-          // });
+          if (csrfData) {
+            handleSignIn.mutate({
+              providerName: 'credentials',
+              payload: {
+                username: 'john@email.com',
+                password: '123',
+                ...csrfData
+              }
+            });
+          }
         }}>
           Login
         </button>
         <button onClick={() => {
-          //signOutMutation.mutate();
+          if (csrfData) {
+            handleSignOut.mutate({ payload: csrfData });
+          }
         }}>
           Logout
         </button>

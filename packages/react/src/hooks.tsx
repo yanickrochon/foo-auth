@@ -10,7 +10,7 @@ import type {
 /**
  * Return the current session query
  */
-export function useSession<SessionType>(): SessionType {
+export function useSession<SessionType>(): SessionType | null {
   const { session } = React.useContext<SessionProviderContextValue<SessionType>>(SessionProviderContext);
 
   return session;
@@ -20,8 +20,8 @@ export function useSession<SessionType>(): SessionType {
 /**
  * Return the session queries
  */
-export function useSessionQueries():SessionProviderQueries {
-  const { queries } = React.useContext<SessionProviderContextValue<any>>(SessionProviderContext);
+export function useSessionQueries<SessionType>():SessionProviderQueries<SessionType> {
+  const { queries } = React.useContext<SessionProviderContextValue<SessionType>>(SessionProviderContext);
 
   return queries;
 }

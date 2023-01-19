@@ -104,48 +104,39 @@ export type FooAuthEndpoints = {
   csrfToken:string;
 };
 
-// export interface FooAuthCredentialsBase {
+
+
+// export type FooAuthApiRequestValidation = {
+//   csrfToken:string;
+// }
+
+// export type FooAuthApiCsrfTokenResponse = {
 //   csrfToken:string;
 // };
 
+// export type FooAuthApiCsrfTokenQuery = {
+//   ():Promise<FooAuthApiCsrfTokenResponse>;
+// };
 
-export type FooAuthApiRequestValidation = {
-  csrfToken:string;
-}
+// export type FooAuthApiSignOutResponse = {
+//   success:boolean;
+// };
 
-export type FooAuthApiCsrfTokenResponse = {
-  csrfToken:string;
-};
-
-export type FooAuthApiSignOutResponse = {
-  success:boolean;
-};
-
-export type FooAuthApiSessionResponse<SessionType> = {
-  success:boolean;
-  token:string | null | undefined;
-  session:SessionType | null;
-};
+// export type FooAuthApiSignOutQuery = {
+//   (payload:FooAuthApiRequestValidation):Promise<FooAuthApiSignOutResponse>;
+// };
 
 
+// export type FooAuthApiSessionResponse<SessionType> = {
+//   success:boolean;
+//   token:string | null | undefined;
+//   session:SessionType | null;
+// };
 
+// export type FooAuthApiSessionQuery = {
+//   <SessionType> ():Promise<FooAuthApiSessionResponse<SessionType>>
+// };
 
-/*
-
-type Handler<Type> = {
-  <Param> (value:Param, ...args:unknown[]):Type;
-};
-
-export type Handlers<Type> = {
-  [x:string]: Handler<Type>
-};
-
-const strHandlers:Handlers<string> = {
-  foo: (value:number, precision:number) => value.toFixed(precision),
-  bar: (value:Date) => value.toISOString(),
-}
-
-const foo:Handler<string> = (value:number, precision:number) => value.toFixed(precision);
-
-console.log( foo(3.141592, 2) );
-*/
+// export type FooAuthApiSignInMutation<Credential> = {
+//   <SessionType> (providerName:string, payload:(Credential & FooAuthApiRequestValidation)):Promise<FooAuthApiSessionResponse<SessionType>>;
+// };
