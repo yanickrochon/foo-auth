@@ -58,7 +58,12 @@ export default function IndexPage() {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
 
-    console.log( Object.fromEntries(data.entries()) );
+    if (csrfData) {
+      handleSignIn.mutate({
+        providerName: 'credentials',
+        payload: Object.fromEntries(data.entries()) as any
+      });
+    }
   };
 
 
@@ -69,27 +74,11 @@ export default function IndexPage() {
       <form onSubmit={ handleSubmit }>
         <input type="text" name="username" />
         <input type="password" name="password" />
-        <input type="hidden" name="csrfToken" />
+        <input type="hidden" name="csrfToken" value={ csrfData?.csrfToken ?? '' } />
         <button type="submit">Sign In</button>
       </form>
 
-
-
       <div>
-        <button onClick={() => {
-          if (csrfData) {
-            handleSignIn.mutate({
-              providerName: 'credentials',
-              payload: {
-                username: 'john@email.com',
-                password: '123',
-                ...csrfData
-              }
-            });
-          }
-        }}>
-          Login
-        </button>
         <button onClick={() => {
           if (csrfData) {
             handleSignOut.mutate({ payload: csrfData });
