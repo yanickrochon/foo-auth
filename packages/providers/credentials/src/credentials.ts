@@ -1,6 +1,9 @@
-import { verifyCSRFToken } from "../encryption/csrf";
+import {
+  verifyCSRFToken,
 
-import type { FooAuthEndpoints, FooAuthProvider } from "../types";
+  type FooAuthEndpoints,
+  type FooAuthProvider
+} from "@foo-auth/core";
 
 
 export type CredentialsOptions<Credentials, SessionType = any> = {
@@ -18,18 +21,20 @@ export function credentials<Credentials, SessionType>({
   return (endpointPath:FooAuthEndpoints) => ({
     [`${endpointPath.signIn}/${name}`]: async ({ req, res, session }) => {
       const { csrfToken, ...credentials } = req.body;
-      const { redirect } = req.query;
+      const { r:redirect } = req.query;
       const token = Array.isArray(csrfToken) ? csrfToken.join('') : csrfToken as string;
 
       if (verifyCSRFToken({ token })) {
         const sessionValue = await authenticate(credentials as Credentials);
-
+        
         if (sessionValue) {
+          const token = await session.setSession(sessionValue);
+
           if (redirect) {
+            // TODO : if JWT, add token to redirect!!
+
             res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
           } else {
-            const token = await session.setSession(sessionValue);
-
             res.status(200).send({
               success: true,
               session: sessionValue,

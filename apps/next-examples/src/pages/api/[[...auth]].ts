@@ -4,10 +4,11 @@ import {
 } from '@foo-auth/next'; 
 
 import {
-  credentials,
   sessionCookie,
   createSecretKey,
 } from '@foo-auth/core';
+
+import { credentials } from '@foo-auth/provider-credentials';
 
 import { endpointPaths, secret } from '../../../foo-auth.config';
 
