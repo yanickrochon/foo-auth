@@ -13,17 +13,25 @@ export interface FooAuthApiRequest extends IncomingMessage {
 };
 
 
+export type FooAuthApiResponseValue<SessionType> = {
+  status: true | false;
+  redirect?: string;
+  session?: SessionType | null;
+  token?: string | null;
+};
+
+
 /**
 * Next `API` route response
 */
-export type FooAuthApiResponse<Response = any> = ServerResponse & {
+export type FooAuthApiResponse<SessionType> = ServerResponse & {
   /**
   * Send data `any` data in response
   */
-  send(body: Response): void;
-  status(statusCode: number): FooAuthApiResponse<Response>;
-  redirect(url: string): FooAuthApiResponse<Response>;
-  redirect(statusCode: number, url: string): FooAuthApiResponse<Response>;
+  send(body: FooAuthApiResponseValue<SessionType>): void;
+  status(statusCode: number): FooAuthApiResponse<SessionType>;
+  redirect(url: string): FooAuthApiResponse<SessionType>;
+  redirect(statusCode: number, url: string): FooAuthApiResponse<SessionType>;
 };
 
 export type SecretKey = KeyObject;
@@ -49,9 +57,9 @@ type SessionToken = {
 };
 
 
-export type FooAuthSessionConfig<SessionType> = {
-  encodeSession?(sessionValue:SessionType):Partial<SessionType> | PromiseLike<Partial<SessionType>>;
-  decodeSession?(data:Partial<SessionType>):SessionType | PromiseLike<SessionType>;
+export type FooAuthSessionConfig<SessionType, SessionSnapshot = any> = {
+  saveSession?(session:SessionType):SessionSnapshot;
+  restoreSession?(snapshot:SessionSnapshot):SessionType;
 };
 
 
@@ -63,16 +71,16 @@ export type FooAuthSession<SessionType> = {
 };
 
 
-export type FooAuthEndpointOptions<SessionType, Response> = {
+export type FooAuthEndpointOptions<SessionType> = {
   req:FooAuthApiRequest;
-  res:FooAuthApiResponse<Response>;
+  res:FooAuthApiResponse<SessionType>;
   cookies:Cookies;
   session:FooAuthSession<SessionType>;
   secretKey:SecretKey;
 };
 
 export type FooAuthEndpointHandler<SessionType> = {
-  <Response = any> (options:FooAuthEndpointOptions<SessionType, Response>):void | Promise<void>;
+  (options:FooAuthEndpointOptions<SessionType>):void | Promise<void>;
 };
 
 export type FooAuthEndpointHandlers<SessionType> = {
@@ -80,20 +88,25 @@ export type FooAuthEndpointHandlers<SessionType> = {
 };
 
 
+export type FooAuthProviderInitOptions<Credentials, SessionType> = {
+  name?:string;
+  authenticate(credentials:Credentials):SessionType | null | PromiseLike<SessionType | null>;
+};
+
 export type FooAuthProvider<SessionType> = {
   (endpointPath:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType>;
 };
 
 
-export type FooAuthSessionInitArg = {
+export type FooAuthSessionInitArg<SessionType> = {
   req:FooAuthApiRequest;
-  res:FooAuthApiResponse;
+  res:FooAuthApiResponse<SessionType>;
   cookies:Cookies;
   secretKey:SecretKey;
 };
 
 export type FooSessionInit<SessionType> = {
-  (args:FooAuthSessionInitArg): FooAuthSession<SessionType>;
+  (args:FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType>;
 };
 
 export type FooAuthEndpoints = {
@@ -103,40 +116,3 @@ export type FooAuthEndpoints = {
   session:string;
   csrfToken:string;
 };
-
-
-
-// export type FooAuthApiRequestValidation = {
-//   csrfToken:string;
-// }
-
-// export type FooAuthApiCsrfTokenResponse = {
-//   csrfToken:string;
-// };
-
-// export type FooAuthApiCsrfTokenQuery = {
-//   ():Promise<FooAuthApiCsrfTokenResponse>;
-// };
-
-// export type FooAuthApiSignOutResponse = {
-//   success:boolean;
-// };
-
-// export type FooAuthApiSignOutQuery = {
-//   (payload:FooAuthApiRequestValidation):Promise<FooAuthApiSignOutResponse>;
-// };
-
-
-// export type FooAuthApiSessionResponse<SessionType> = {
-//   success:boolean;
-//   token:string | null | undefined;
-//   session:SessionType | null;
-// };
-
-// export type FooAuthApiSessionQuery = {
-//   <SessionType> ():Promise<FooAuthApiSessionResponse<SessionType>>
-// };
-
-// export type FooAuthApiSignInMutation<Credential> = {
-//   <SessionType> (providerName:string, payload:(Credential & FooAuthApiRequestValidation)):Promise<FooAuthApiSessionResponse<SessionType>>;
-// };

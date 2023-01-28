@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 //import { getCsrfTokenQuery, getSessionQuery, postSignInQuery, postSignOutQuery } from '../routes';
 
 import { getPageProps } from '@foo-auth/next';
-import { fooAuthConfig, type UserCredentials, type SessionType } from './api/[[...auth]]';
+import { fooAuthConfig, type UserCredentials, type SessionType } from './api/[...auth]';
 
 import type { GetServerSideProps } from 'next';
 import type { SyntheticEvent } from 'react';

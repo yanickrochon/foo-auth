@@ -53,18 +53,18 @@ export const fooAuthConfig:NextFooAuthConfig<SessionType> = {
   endpointPaths,
 
   session: sessionCookie({
-    encodeSession(sessionValue) {
-      return { id:sessionValue.id };  // save only id
+    saveSession(sessionValue) {
+      return { id: sessionValue.id };
     },
-    decodeSession(data) {
-      const user = findUser(user => user.id === data.id);
-      
+    restoreSession(snapshot) {
+      const user = findUser(user => user.id === snapshot.id);
+
       return convertSessionType(user);
     }
   }),
   
   providers: [
-    credentials({
+    credentials<UserCredentials, SessionType>({
       authenticate(credentials:UserCredentials) {
         const user = findUser(user => user.username === credentials.username && user.password === credentials.password);
   

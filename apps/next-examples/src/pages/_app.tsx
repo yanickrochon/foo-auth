@@ -8,7 +8,7 @@ import {
 import { SessionProvider } from '@foo-auth/react';
 
 import type { FooAuthPageProps } from '@foo-auth/next';
-import type { SessionType } from './api/[[...auth]]';
+import type { SessionType } from './api/[...auth]';
 import type { AppType } from "next/app";
 
 import type { SessionProviderContextValue } from '@foo-auth/react';

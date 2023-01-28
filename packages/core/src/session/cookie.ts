@@ -1,58 +1,63 @@
 //import * as jose from 'jose';
 
 import { encryptString, decryptString } from '../encryption/string';
-import type { FooAuthSessionInitArg, FooAuthSession, FooAuthSessionConfig } from '../types';
+
+import type {
+  FooAuthSessionInitArg,
+  FooAuthSession,
+  FooAuthSessionConfig,
+} from '../types';
 
 
-export type FooSessionCookiesConfig<SessionType> = {
+
+export type FooSessionCookiesConfig<SessionType, SessionSnapshot = any> = {
   sessionName?:string;
-} & FooAuthSessionConfig<SessionType>;
+} & FooAuthSessionConfig<SessionType, SessionSnapshot>;
 
 export const DEFAULT_SESSION_COOKIE_NAME = 'foo-auth:session';
 
 
-export function sessionCookie<SessionType = any>({
+const defaultSaveSession = <SessionType> (x:SessionType):any => x;
+const defaultRestoreSession = <SessionType> (x:any):SessionType => x as SessionType;
+
+
+export function sessionCookie<SessionType>({
   sessionName = DEFAULT_SESSION_COOKIE_NAME,
-  encodeSession = (x:SessionType) => x,
-  decodeSession = (x:SessionType) => x
-}:FooSessionCookiesConfig<SessionType>) {
-  return ({ cookies, secretKey }:FooAuthSessionInitArg):FooAuthSession<SessionType> => ({
+  saveSession = defaultSaveSession,
+  restoreSession = defaultRestoreSession,
+}:FooSessionCookiesConfig<SessionType> = {}) {
+  return ({ cookies, secretKey }:FooAuthSessionInitArg<SessionType>):FooAuthSession<SessionType> => ({
     clearSession() {
       cookies.set(sessionName, null);
     },
 
     getSessionToken() {
-      return undefined;
+      return cookies.get(sessionName);
     },
 
     async getSession() {
       const encrypted = cookies.get(sessionName) ?? '';
 
       try {
-        const decrypted = decryptString({ encrypted, secretKey })
-
-        if (decrypted) {
-          const payload = await decodeSession(JSON.parse(decrypted));
-
-          return payload;
+        const snapshot = decryptString({ encrypted, secretKey });
+        
+        if (snapshot) {
+          return restoreSession(JSON.parse(snapshot as any))
         } else {
           return null;
         }
       } catch (e) {
-        return null; // failed to parse cookie, assume invalid session
+        return null; // failed to parse cookie or session snapshot, assume invalid session
       }
     },
 
     async setSession(payload) {
-      const data = await encodeSession(payload);
-      const encrypted = encryptString({
-        text: JSON.stringify(data),
-        secretKey
-      });
+      const snapshot = saveSession(payload);
+      const token = encryptString({text: JSON.stringify(snapshot), secretKey });
 
-      cookies.set(sessionName, encrypted);
+      cookies.set(sessionName, token);
 
-      return encrypted;
+      return token;
     },
   });
 };

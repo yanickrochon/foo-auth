@@ -19,6 +19,7 @@ import type {
 const basePath = process.env.NEXT_PUBLIC_FOO_AUTH_API_BASE_PATH ?? '';
 
 
+
 export const getCsrfTokenQuery = ({ csrfToken }:FooAuthEndpoints):GetCsrfTokenQuery => async () => 
     fetch(`${basePath}${csrfToken}`, {
         method:"GET",

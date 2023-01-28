@@ -26,7 +26,7 @@ export function fooAuthNext<SessionType = any>({
     const endpoint = endpoints[path];
 
     if (endpoint) {
-      const { req, res } = serverApiAdapter(_req, _res);
+      const { req, res } = serverApiAdapter<SessionType>(_req, _res);
       const cookies = new Cookies(_req, _res);
   
       await endpoint({

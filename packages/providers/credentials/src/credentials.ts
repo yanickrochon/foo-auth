@@ -1,23 +1,22 @@
 import {
   verifyCSRFToken,
 
+  type FooAuthProviderInitOptions,
   type FooAuthEndpoints,
   type FooAuthProvider
 } from "@foo-auth/core";
 
 
-export type CredentialsOptions<Credentials, SessionType = any> = {
-  name?:string;
-  authenticate(credentials:Credentials):SessionType | null | PromiseLike<SessionType | null>;
-};
-
 const DEFAULT_NAME = "credentials";
+
+
+export type CredentialsProviderInitOptions<Credentials, SessionType> = FooAuthProviderInitOptions<Credentials, SessionType>;
 
 
 export function credentials<Credentials, SessionType>({
   name = DEFAULT_NAME,
   authenticate
-}:CredentialsOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
+}:CredentialsProviderInitOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
   return (endpointPath:FooAuthEndpoints) => ({
     [`${endpointPath.signIn}/${name}`]: async ({ req, res, session }) => {
       const { csrfToken, ...credentials } = req.body;

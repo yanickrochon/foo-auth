@@ -3,16 +3,15 @@ import {
   jwtEncode,
   jwtDecode,
 
+  type FooAuthProviderInitOptions,
   type FooAuthEndpoints,
   type FooAuthProvider
 } from "@foo-auth/core";
 
 
-export type CredentialsOptions<Credentials, SessionType = any> = {
-  name?:string;
-  authenticate(credentials:Credentials):SessionType | null | PromiseLike<SessionType | null>;
+export type EmailProviderInitOptions<Credentials, SessionType> = {
   maxTokenAge:string;
-};
+} & FooAuthProviderInitOptions<Credentials, SessionType>;
 
 const DEFAULT_NAME = "email";
 
@@ -21,7 +20,7 @@ export function email<Credentials, SessionType>({
   name = DEFAULT_NAME,
   authenticate,
   maxTokenAge
-}:CredentialsOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
+}:EmailProviderInitOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
   return (endpointPath:FooAuthEndpoints) => ({
     [`${endpointPath.signIn}/${name}`]: async ({ req, res, session, secretKey }) => {
       const { csrfToken, ...credentials } = req.body;

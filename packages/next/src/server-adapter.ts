@@ -3,16 +3,16 @@ import type { FooAuthApiRequest, FooAuthApiResponse } from '@foo-auth/core';
 import type { IncomingMessage, ServerResponse } from "http";
 
 
-type ServerAdapter = {
+type ServerAdapter<SessionType> = {
   req:FooAuthApiRequest;
-  res:FooAuthApiResponse;
+  res:FooAuthApiResponse<SessionType>;
 }
 
 
-export const serverApiAdapter = (req:NextApiRequest, res:NextApiResponse):ServerAdapter => ({ req, res });
+export const serverApiAdapter = <SessionType> (req:NextApiRequest, res:NextApiResponse):ServerAdapter<SessionType> => ({ req, res });
 
 
-export const serverPageAdapter = (req:IncomingMessage, res:ServerResponse<IncomingMessage>):ServerAdapter => ({
+export const serverPageAdapter = <SessionType> (req:IncomingMessage, res:ServerResponse<IncomingMessage>):ServerAdapter<SessionType> => ({
   req: {
     ...req as any,
     query: {},
