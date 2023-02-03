@@ -17,8 +17,8 @@ export type FooSessionCookiesConfig<SessionType, SessionSnapshot = any> = {
 export const DEFAULT_SESSION_COOKIE_NAME = 'foo-auth:session';
 
 
-const defaultSaveSession = <SessionType> (x:SessionType):any => x;
-const defaultRestoreSession = <SessionType> (x:any):SessionType => x as SessionType;
+const defaultSaveSession = <SessionType, SessionSnapshot> (x:SessionType):SessionSnapshot => x as any;
+const defaultRestoreSession = <SessionType, SessionSnapshot> (x:SessionSnapshot):SessionType => x as any;
 
 
 export function sessionCookie<SessionType>({
@@ -31,24 +31,32 @@ export function sessionCookie<SessionType>({
       cookies.set(sessionName, null);
     },
 
+    hasSession() {
+      return !!cookies.get(sessionName);
+    },
+
     getSessionToken() {
-      return cookies.get(sessionName);
+      // do not expore cookie
+      return undefined;
     },
 
     async getSession() {
       const encrypted = cookies.get(sessionName) ?? '';
+      let sessionValue = null;
 
       try {
         const snapshot = decryptString({ encrypted, secretKey });
         
         if (snapshot) {
-          return restoreSession(JSON.parse(snapshot as any))
-        } else {
-          return null;
+          sessionValue = restoreSession(JSON.parse(snapshot as any))
         }
       } catch (e) {
-        return null; // failed to parse cookie or session snapshot, assume invalid session
+        if (process.env.NODE_ENV === 'development') {
+          console.error(e);
+        }
       }
+
+      return sessionValue;
     },
 
     async setSession(payload) {
@@ -57,7 +65,8 @@ export function sessionCookie<SessionType>({
 
       cookies.set(sessionName, token);
 
-      return token;
+      // do not expore cookie
+      return undefined;
     },
   });
 };

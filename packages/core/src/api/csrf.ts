@@ -3,7 +3,6 @@ import { createCSRFToken } from '../encryption/csrf';
 import type {
   FooAuthEndpointHandlers,
   FooAuthEndpoints,
-  //FooAuthApiCsrfTokenResponse
 } from '../types';
 
 export function csrfEndpoints<SessionType>({ csrfToken }:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
@@ -11,7 +10,7 @@ export function csrfEndpoints<SessionType>({ csrfToken }:FooAuthEndpoints):FooAu
     [csrfToken]: ({ res }) => {
       const csrfToken = createCSRFToken();
 
-      res.status(200).send({ csrfToken } as any);
+      res.status(200).send({ csrfToken });
     }
   }
 }

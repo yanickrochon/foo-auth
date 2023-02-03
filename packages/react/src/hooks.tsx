@@ -11,9 +11,9 @@ import type {
  * Return the current session query
  */
 export function useSession<SessionType>(): SessionType | null {
-  const { session } = React.useContext<SessionProviderContextValue<SessionType>>(SessionProviderContext);
+  const context = React.useContext<SessionProviderContextValue<SessionType>>(SessionProviderContext);
 
-  return session;
+  return context.session;
 };
 
 

@@ -9,9 +9,10 @@ export type ApiCsrfResponse = {
 }
 
 export type ApiSessionResponse<SessionType> = {
-  success:boolean;
-  token:string | null | undefined;
-  session:SessionType | null;
+    success:boolean;
+    session:SessionType | null;
+    token?:string | null | undefined;
+    redirect?:string | null | undefined;
 };
 
 export type ApiSignOutResponse = {
@@ -54,6 +55,6 @@ export type SessionProviderQueries<SessionType> = {
 
 export type SessionProviderContextValue<SessionType> = {
     session:SessionType|null;
-    setSession(session:SessionType):void;
+    clearSession():void;
     queries:SessionProviderQueries<SessionType>;
 };

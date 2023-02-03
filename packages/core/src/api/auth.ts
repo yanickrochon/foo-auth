@@ -3,7 +3,6 @@ import { verifyCSRFToken } from "../encryption/csrf";
 import type {
   FooAuthEndpointHandlers,
   FooAuthEndpoints,
-  //FooAuthApiSignOutResponse
 } from '../types';
 
 export function authEndpoints<SessionType = any>({ signOut }:FooAuthEndpoints):FooAuthEndpointHandlers<SessionType> {
@@ -17,7 +16,7 @@ export function authEndpoints<SessionType = any>({ signOut }:FooAuthEndpoints):F
 
         res.status(200).send({
           success:true
-        } as any);  
+        });  
       } else {
         res.status(401).end();
       }

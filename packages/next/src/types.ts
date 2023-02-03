@@ -5,10 +5,18 @@ import type {
   SecretKey
 } from '@foo-auth/core';
 
+export type FooAuthPages = {
+  home?: string | null | undefined;
+  signin?: string | null | undefined;
+  signout?: string | null | undefined;
+  verify?: string | null | undefined;
+};
+
 export type NextFooAuthConfig<SessionType> = {
   session:FooSessionInit<SessionType>;
   providers:FooAuthProvider<SessionType>[];
   endpointPaths:FooAuthEndpoints;
+  pages?: FooAuthPages;
   secretKey:SecretKey;
 };
 

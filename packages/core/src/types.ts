@@ -14,10 +14,12 @@ export interface FooAuthApiRequest extends IncomingMessage {
 
 
 export type FooAuthApiResponseValue<SessionType> = {
-  status: true | false;
+  success: true | false;
   redirect?: string;
   session?: SessionType | null;
   token?: string | null;
+} | {
+  csrfToken: string;
 };
 
 
@@ -36,38 +38,29 @@ export type FooAuthApiResponse<SessionType> = ServerResponse & {
 
 export type SecretKey = KeyObject;
 
-
-type ClearSession = {
-  ():void | PromiseLike<void>;
-};
-
-type GetSession<SessionType> = {
-  ():SessionType | null | PromiseLike<SessionType | null>;
-};
-
 type SetSession<SessionType> = {
-  /**
-   * Return a session token for the given session data
-   */
-  (sessionValue:SessionType):string | PromiseLike<string>;
-};
 
-type SessionToken = {
-  ():string | null | undefined | PromiseLike<string | null | undefined>;
 };
 
 
 export type FooAuthSessionConfig<SessionType, SessionSnapshot = any> = {
-  saveSession?(session:SessionType):SessionSnapshot;
-  restoreSession?(snapshot:SessionSnapshot):SessionType;
+  saveSession?(session:SessionType):SessionSnapshot | Promise<SessionSnapshot>;
+  restoreSession?(snapshot:SessionSnapshot):SessionType | null | Promise<SessionType | null>;
 };
 
 
 export type FooAuthSession<SessionType> = {
-  clearSession:ClearSession;
-  getSession:GetSession<SessionType>;
-  getSessionToken:SessionToken;
-  setSession:SetSession<SessionType>;
+  clearSession():void | PromiseLike<void>;
+  hasSession():boolean;
+  getSession():SessionType | null | PromiseLike<SessionType | null>;
+  /**
+  * Return a session token for the given session data, or undefined if the session token should not be exposed
+  */
+  getSessionToken():string | null | undefined | PromiseLike<string | null | undefined>;
+  /**
+  * Return a session token for the given session data, or undefined if the session token should not be exposed
+  */
+  setSession(sessionValue:SessionType):string | undefined | PromiseLike<string | undefined>;
 };
 
 

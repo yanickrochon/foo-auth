@@ -31,8 +31,8 @@ const getToken = (req:FooAuthApiRequest) => {
 };
 
 
-const defaultSaveSession = <SessionType> (x:SessionType):any => x;
-const defaultRestoreSession = <SessionType> (x:any):SessionType => x as SessionType;
+const defaultSaveSession = <SessionType, SessionSnapshot> (x:SessionType):SessionSnapshot => x as any;
+const defaultRestoreSession = <SessionType, SessionSnapshot> (x:SessionSnapshot):SessionType => x as any;
 
 
 export function sessionJwt<SessionType, SessionSnapshot = any>({
@@ -47,24 +47,33 @@ export function sessionJwt<SessionType, SessionSnapshot = any>({
       /* nothing */
     },
 
+    hasSession() {
+      return !!getToken(req);
+    },
+
     getSessionToken() {
       return getToken(req);
     },
     
     async getSession() {
       const jwtToken = getToken(req);
+      let sessionValue = null;
 
       if (jwtToken) {
-        const result = await jwtDecode(jwtToken, secretKey, { issuer, audience });
+        try {
+          const result = await jwtDecode(jwtToken, secretKey, { issuer, audience });
 
-        if (result?.payload) {
-          return restoreSession(result.payload as any);
-        } else {
-          return null;
+          if (result?.payload) {
+            sessionValue = restoreSession(result.payload as any);
+          }
+        } catch (e) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error(e);
+          }
         }
-      } else {
-        return null;
       }
+
+      return sessionValue;
     },
 
     async setSession(payload) {

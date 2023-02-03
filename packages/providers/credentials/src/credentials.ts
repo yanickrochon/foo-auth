@@ -2,6 +2,7 @@ import {
   verifyCSRFToken,
 
   type FooAuthProviderInitOptions,
+  type FooAuthApiResponseValue,
   type FooAuthEndpoints,
   type FooAuthProvider
 } from "@foo-auth/core";
@@ -9,6 +10,7 @@ import {
 
 const DEFAULT_NAME = "credentials";
 
+const REDIRECT_JOIN_STR = "\n";
 
 export type CredentialsProviderInitOptions<Credentials, SessionType> = FooAuthProviderInitOptions<Credentials, SessionType>;
 
@@ -29,17 +31,12 @@ export function credentials<Credentials, SessionType>({
         if (sessionValue) {
           const token = await session.setSession(sessionValue);
 
-          if (redirect) {
-            // TODO : if JWT, add token to redirect!!
-
-            res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
-          } else {
-            res.status(200).send({
-              success: true,
-              session: sessionValue,
-              token
-            } as any);
-          }
+          res.status(200).send({
+            success: true,
+            token,
+            session: sessionValue,
+            redirect: Array.isArray(redirect) ? redirect.join(REDIRECT_JOIN_STR) : redirect as string
+          });
         } else {
           res.status(403).end();
         }

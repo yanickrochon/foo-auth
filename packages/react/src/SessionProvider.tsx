@@ -27,8 +27,8 @@ export type SessionProviderProps<SessionType> = {
 
 const dummyQueries:SessionProviderQueries<any> = {
   async csrfTokenQuery() { return { csrfToken:'' }; },
-  async sessionQuery() { return { success:true, token:'', session:null }; },
-  async signInMutation() { return { success:true, token:'', session:null }; },
+  async sessionQuery() { return { success:true, session:null }; },
+  async signInMutation() { return { success:true, session:null }; },
   async signOutMutation() { return { success:true }; },
 }
 
@@ -42,7 +42,7 @@ export const SessionProvider = <SessionType extends unknown> ({
 
   const contextValue:SessionProviderContextValue<SessionType> = {
     session,
-    setSession,
+    clearSession() { setSession(null); },
     queries: endpointPaths ? {
       csrfTokenQuery: getCsrfTokenQuery(endpointPaths),
       sessionQuery: getSessionQuery(endpointPaths),
