@@ -2,8 +2,8 @@ import type {
   FooSessionInit,
   FooAuthProvider,
   FooAuthEndpoints,
-  SecretKey
-} from '@foo-auth/core';
+  SecretKey,
+} from "@foo-auth/core";
 
 export type FooAuthPages = {
   home?: string | null | undefined;
@@ -13,14 +13,14 @@ export type FooAuthPages = {
 };
 
 export type NextFooAuthConfig<SessionType> = {
-  session:FooSessionInit<SessionType>;
-  providers:FooAuthProvider<SessionType>[];
-  endpointPaths:FooAuthEndpoints;
+  session: FooSessionInit<SessionType>;
+  providers: FooAuthProvider<SessionType>[];
+  endpointPaths: FooAuthEndpoints;
   pages?: FooAuthPages;
-  secretKey:SecretKey;
+  secretKey: SecretKey;
 };
 
 export type FooAuthPageProps<SessionType> = {
-  session:SessionType;
-  endpointPaths:FooAuthEndpoints;
+  session: SessionType;
+  endpointPaths: FooAuthEndpoints;
 };

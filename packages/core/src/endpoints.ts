@@ -1,27 +1,22 @@
-import { authEndpoints } from './api/auth';
-import { sessionEndpoints } from './api/session';
-import { csrfEndpoints } from './api/csrf';
+import { authEndpoints } from "./api/auth";
+import { sessionEndpoints } from "./api/session";
+import { csrfEndpoints } from "./api/csrf";
 
-import type { FooAuthProvider, FooAuthEndpoints } from './types';
-
-
-
+import type { FooAuthProvider, FooAuthEndpoints } from "./types";
 
 export type GetEndpointArgs<SessionType> = {
-  endpointPaths:FooAuthEndpoints;
-  providers:FooAuthProvider<SessionType>[]
-}
-
+  endpointPaths: FooAuthEndpoints;
+  providers: FooAuthProvider<SessionType>[];
+};
 
 export function getEndpoints<SessionType>({
   endpointPaths,
-  providers
-}:GetEndpointArgs<SessionType>) {
-
+  providers,
+}: GetEndpointArgs<SessionType>) {
   const endpoints = {
     ...authEndpoints(endpointPaths),
     ...sessionEndpoints(endpointPaths),
-    ...csrfEndpoints(endpointPaths)
+    ...csrfEndpoints(endpointPaths),
   };
 
   // register routes
@@ -33,11 +28,11 @@ export function getEndpoints<SessionType>({
         if (path in endpoints) {
           throw new Error(`Duplicate endpoint path : ${path}`);
         }
-       
+
         endpoints[path] = provider[path];
       }
     }
   }
 
   return endpoints;
-};
+}

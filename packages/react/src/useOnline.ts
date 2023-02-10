@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 
 /**
  * Hook returning a boolean state whenever the browser is currently network-connected or not
  */
-export function useOnline():boolean {
+export function useOnline(): boolean {
   const [isOnline, setIsOnline] = React.useState(
     typeof navigator !== "undefined" ? navigator.onLine : false
   );
@@ -11,7 +11,7 @@ export function useOnline():boolean {
   React.useEffect(() => {
     const setOnline = () => setIsOnline(true);
     const setOffline = () => setIsOnline(false);
-  
+
     window.addEventListener("online", setOnline);
     window.addEventListener("offline", setOffline);
 
@@ -22,4 +22,4 @@ export function useOnline():boolean {
   }, []);
 
   return isOnline;
-};
+}

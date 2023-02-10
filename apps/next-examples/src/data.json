@@ -1,7 +1,5 @@
 {
-
   "users": [
-
     {
       "id": "1",
       "username": "john@email.com",
@@ -16,8 +14,5 @@
       "firstName": "Jane",
       "lastName": "Doe"
     }
-
   ]
-
-
 }

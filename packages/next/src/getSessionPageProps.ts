@@ -3,11 +3,10 @@ import type { IncomingMessage, ServerResponse } from "http";
 import { Cookies, FooAuthEndpoints } from "@foo-auth/core";
 
 import { serverPageAdapter } from "./server-adapter";
-import { getRedirect, setRedirect } from './util/redirect';
+import { getRedirect, setRedirect } from "./util/redirect";
 
-import type { GetServerSidePropsResult } from 'next';
+import type { GetServerSidePropsResult } from "next";
 import type { NextFooAuthConfig } from "./types";
-
 
 export type SessionPagePropsArg<SessionType> = {
   req: IncomingMessage;
@@ -21,14 +20,13 @@ export type SessionPageProps<SessionType> = {
 };
 
 export type SessionPagePropsCallback<SessionType> = {
-  (sessionPageProps:SessionPageProps<SessionType>):Promise<{ props: any }>;
-}
+  (sessionPageProps: SessionPageProps<SessionType>): Promise<{ props: any }>;
+};
 
-export async function getSessionPageProps<SessionType>({
-  req: _req,
-  res: _res,
-  config,
-}: SessionPagePropsArg<SessionType>, callback:SessionPagePropsCallback<SessionType>): Promise<GetServerSidePropsResult<any>> {
+export async function getSessionPageProps<SessionType>(
+  { req: _req, res: _res, config }: SessionPagePropsArg<SessionType>,
+  callback: SessionPagePropsCallback<SessionType>
+): Promise<GetServerSidePropsResult<any>> {
   const { req, res } = serverPageAdapter(_req, _res);
   const cookies = new Cookies(_req, _res);
   const session = config.session({
@@ -39,7 +37,7 @@ export async function getSessionPageProps<SessionType>({
   });
 
   const hasSession = session.hasSession();
-  let redirect = null; 
+  let redirect = null;
 
   //console.log( _req );
 
@@ -52,13 +50,15 @@ export async function getSessionPageProps<SessionType>({
     //redirect = config.pages.signin;
   }
 
-  return redirect ? {
-    redirect: {
-      destination: redirect,
-      permanent: false,
-    } 
-  } : callback({
-    session: await session.getSession(),
-    endpointPaths: config.endpointPaths,
-  });
+  return redirect
+    ? {
+        redirect: {
+          destination: redirect,
+          permanent: false,
+        },
+      }
+    : callback({
+        session: await session.getSession(),
+        endpointPaths: config.endpointPaths,
+      });
 }

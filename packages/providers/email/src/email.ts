@@ -2,38 +2,47 @@ import {
   verifyCSRFToken,
   jwtEncode,
   jwtDecode,
-
   type FooAuthProviderInitOptions,
   type FooAuthEndpoints,
-  type FooAuthProvider
+  type FooAuthProvider,
 } from "@foo-auth/core";
 
-
 export type EmailProviderInitOptions<Credentials, SessionType> = {
-  maxTokenAge:string;
+  maxTokenAge: string;
 } & FooAuthProviderInitOptions<Credentials, SessionType>;
 
 const DEFAULT_NAME = "email";
 
-
 export function email<Credentials, SessionType>({
   name = DEFAULT_NAME,
   authenticate,
-  maxTokenAge
-}:EmailProviderInitOptions<Credentials, SessionType>):FooAuthProvider<SessionType> {
-  return (endpointPath:FooAuthEndpoints) => ({
-    [`${endpointPath.signIn}/${name}`]: async ({ req, res, session, secretKey }) => {
+  maxTokenAge,
+}: EmailProviderInitOptions<
+  Credentials,
+  SessionType
+>): FooAuthProvider<SessionType> {
+  return (endpointPath: FooAuthEndpoints) => ({
+    [`${endpointPath.signIn}/${name}`]: async ({
+      req,
+      res,
+      session,
+      secretKey,
+    }) => {
       const { csrfToken, ...credentials } = req.body;
-      const { r:redirect } = req.query;
-      const token = Array.isArray(csrfToken) ? csrfToken.join('') : csrfToken as string;
+      const { r: redirect } = req.query;
+      const token = Array.isArray(csrfToken)
+        ? csrfToken.join("")
+        : (csrfToken as string);
 
       if (verifyCSRFToken({ token })) {
         const sessionValue = await authenticate(credentials as Credentials);
 
         if (sessionValue) {
-          const emailToken = jwtEncode({ sessionValue, redirect }, secretKey, { maxTokenAge });
+          const emailToken = jwtEncode({ sessionValue, redirect }, secretKey, {
+            maxTokenAge,
+          });
 
-          console.log("Email validation token:", emailToken );
+          console.log("Email validation token:", emailToken);
 
           // if (redirect) {
           //   res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
@@ -52,14 +61,22 @@ export function email<Credentials, SessionType>({
         res.status(401).end();
       }
     },
-    [`${endpointPath.signIn}/${name}/verify/:emailToken`]: async ({ req, res, session, secretKey }) => {
+    [`${endpointPath.signIn}/${name}/verify/:emailToken`]: async ({
+      req,
+      res,
+      session,
+      secretKey,
+    }) => {
       const { emailToken } = req.query;
 
       if (emailToken) {
         try {
-          const token = Array.isArray(emailToken) ? emailToken.join('') : emailToken ?? '';
+          const token = Array.isArray(emailToken)
+            ? emailToken.join("")
+            : emailToken ?? "";
 
-          const { sessionValue, redirect } = jwtDecode(token, secretKey) as any ?? {};
+          const { sessionValue, redirect } =
+            (jwtDecode(token, secretKey) as any) ?? {};
 
           if (sessionValue) {
             const token = await session.setSession(sessionValue);
@@ -67,14 +84,17 @@ export function email<Credentials, SessionType>({
             if (redirect) {
               // TODO : if JWT, add token to redirect!!
 
-              res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
+              res.redirect(
+                307,
+                Array.isArray(redirect) ? redirect[0] : redirect
+              );
             } else {
               // TODO : email should redirect somewhere!
 
               res.status(200).send({
                 success: true,
                 session: sessionValue,
-                token
+                token,
               } as any);
             }
           } else {
@@ -86,6 +106,6 @@ export function email<Credentials, SessionType>({
       } else {
         res.status(401).end();
       }
-    }
+    },
   });
-};
+}

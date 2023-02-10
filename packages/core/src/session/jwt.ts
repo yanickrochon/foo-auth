@@ -1,39 +1,36 @@
-import { jwtEncode, jwtDecode } from '../encryption/jwt';
+import { jwtEncode, jwtDecode } from "../encryption/jwt";
 
 import type {
   FooAuthSessionInitArg,
   FooAuthSession,
   FooAuthSessionConfig,
-  FooAuthApiRequest
-} from '../types';
-
-
+  FooAuthApiRequest,
+} from "../types";
 
 export type FooSessionJwtConfig<SessionType, SessionSnapshot = any> = {
-  issuer:string;
-  audience:string;
-  maxTokenAge:string;
+  issuer: string;
+  audience: string;
+  maxTokenAge: string;
 } & FooAuthSessionConfig<SessionType, SessionSnapshot>;
 
+export const JWT_HEADER_NAME = "Authorization";
 
-export const JWT_HEADER_NAME = 'Authorization';
-
-
-
-const getToken = (req:FooAuthApiRequest) => {
+const getToken = (req: FooAuthApiRequest) => {
   const jwtToken = req.headers[JWT_HEADER_NAME] as string;
 
   if (jwtToken) {
-    return jwtToken.replace('Bearer ', '');
+    return jwtToken.replace("Bearer ", "");
   } else {
     return undefined;
   }
 };
 
-
-const defaultSaveSession = <SessionType, SessionSnapshot> (x:SessionType):SessionSnapshot => x as any;
-const defaultRestoreSession = <SessionType, SessionSnapshot> (x:SessionSnapshot):SessionType => x as any;
-
+const defaultSaveSession = <SessionType, SessionSnapshot>(
+  x: SessionType
+): SessionSnapshot => x as any;
+const defaultRestoreSession = <SessionType, SessionSnapshot>(
+  x: SessionSnapshot
+): SessionType => x as any;
 
 export function sessionJwt<SessionType, SessionSnapshot = any>({
   issuer,
@@ -41,8 +38,11 @@ export function sessionJwt<SessionType, SessionSnapshot = any>({
   maxTokenAge,
   saveSession = defaultSaveSession,
   restoreSession = defaultRestoreSession,
-}:FooSessionJwtConfig<SessionType, SessionSnapshot>) {
-  return ({ req, secretKey }:FooAuthSessionInitArg<SessionType>):FooAuthSession<SessionType> => ({
+}: FooSessionJwtConfig<SessionType, SessionSnapshot>) {
+  return ({
+    req,
+    secretKey,
+  }: FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType> => ({
     clearSession() {
       /* nothing */
     },
@@ -54,20 +54,23 @@ export function sessionJwt<SessionType, SessionSnapshot = any>({
     getSessionToken() {
       return getToken(req);
     },
-    
+
     async getSession() {
       const jwtToken = getToken(req);
       let sessionValue = null;
 
       if (jwtToken) {
         try {
-          const result = await jwtDecode(jwtToken, secretKey, { issuer, audience });
+          const result = await jwtDecode(jwtToken, secretKey, {
+            issuer,
+            audience,
+          });
 
           if (result?.payload) {
             sessionValue = restoreSession(result.payload as any);
           }
         } catch (e) {
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === "development") {
             console.error(e);
           }
         }
@@ -79,7 +82,11 @@ export function sessionJwt<SessionType, SessionSnapshot = any>({
     async setSession(payload) {
       const snapshot = saveSession(payload);
 
-      return jwtEncode(snapshot as any, secretKey, { issuer, audience, maxTokenAge });
+      return jwtEncode(snapshot as any, secretKey, {
+        issuer,
+        audience,
+        maxTokenAge,
+      });
     },
   });
-};
+}

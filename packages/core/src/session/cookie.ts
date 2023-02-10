@@ -1,32 +1,35 @@
 //import * as jose from 'jose';
 
-import { encryptString, decryptString } from '../encryption/string';
+import { encryptString, decryptString } from "../encryption/string";
 
 import type {
   FooAuthSessionInitArg,
   FooAuthSession,
   FooAuthSessionConfig,
-} from '../types';
-
-
+} from "../types";
 
 export type FooSessionCookiesConfig<SessionType, SessionSnapshot = any> = {
-  sessionName?:string;
+  sessionName?: string;
 } & FooAuthSessionConfig<SessionType, SessionSnapshot>;
 
-export const DEFAULT_SESSION_COOKIE_NAME = 'foo-auth:session';
+export const DEFAULT_SESSION_COOKIE_NAME = "foo-auth:session";
 
-
-const defaultSaveSession = <SessionType, SessionSnapshot> (x:SessionType):SessionSnapshot => x as any;
-const defaultRestoreSession = <SessionType, SessionSnapshot> (x:SessionSnapshot):SessionType => x as any;
-
+const defaultSaveSession = <SessionType, SessionSnapshot>(
+  x: SessionType
+): SessionSnapshot => x as any;
+const defaultRestoreSession = <SessionType, SessionSnapshot>(
+  x: SessionSnapshot
+): SessionType => x as any;
 
 export function sessionCookie<SessionType>({
   sessionName = DEFAULT_SESSION_COOKIE_NAME,
   saveSession = defaultSaveSession,
   restoreSession = defaultRestoreSession,
-}:FooSessionCookiesConfig<SessionType> = {}) {
-  return ({ cookies, secretKey }:FooAuthSessionInitArg<SessionType>):FooAuthSession<SessionType> => ({
+}: FooSessionCookiesConfig<SessionType> = {}) {
+  return ({
+    cookies,
+    secretKey,
+  }: FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType> => ({
     clearSession() {
       cookies.set(sessionName, null);
     },
@@ -41,17 +44,17 @@ export function sessionCookie<SessionType>({
     },
 
     async getSession() {
-      const encrypted = cookies.get(sessionName) ?? '';
+      const encrypted = cookies.get(sessionName) ?? "";
       let sessionValue = null;
 
       try {
         const snapshot = decryptString({ encrypted, secretKey });
-        
+
         if (snapshot) {
-          sessionValue = restoreSession(JSON.parse(snapshot as any))
+          sessionValue = restoreSession(JSON.parse(snapshot as any));
         }
       } catch (e) {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.error(e);
         }
       }
@@ -61,7 +64,10 @@ export function sessionCookie<SessionType>({
 
     async setSession(payload) {
       const snapshot = saveSession(payload);
-      const token = encryptString({text: JSON.stringify(snapshot), secretKey });
+      const token = encryptString({
+        text: JSON.stringify(snapshot),
+        secretKey,
+      });
 
       cookies.set(sessionName, token);
 
@@ -69,4 +75,4 @@ export function sessionCookie<SessionType>({
       return undefined;
     },
   });
-};
+}
