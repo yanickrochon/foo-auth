@@ -4,7 +4,7 @@ import { csrfEndpoints } from "./api/csrf";
 
 import type { FooAuthProvider, FooAuthEndpoints } from "./types";
 
-export type GetEndpointArgs<SessionType> = {
+export type GetEndpointOptions<SessionType> = {
   endpointPaths: FooAuthEndpoints;
   providers: FooAuthProvider<SessionType>[];
 };
@@ -12,7 +12,7 @@ export type GetEndpointArgs<SessionType> = {
 export function getEndpoints<SessionType>({
   endpointPaths,
   providers,
-}: GetEndpointArgs<SessionType>) {
+}: GetEndpointOptions<SessionType>) {
   const endpoints = {
     ...authEndpoints(endpointPaths),
     ...sessionEndpoints(endpointPaths),

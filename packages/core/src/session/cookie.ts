@@ -1,9 +1,10 @@
 //import * as jose from 'jose';
 
+import { Console } from "console";
 import { encryptString, decryptString } from "../encryption/string";
 
 import type {
-  FooAuthSessionInitArg,
+  FooAuthSessionInitOptions,
   FooAuthSession,
   FooAuthSessionConfig,
 } from "../types";
@@ -27,15 +28,16 @@ export function sessionCookie<SessionType>({
   restoreSession = defaultRestoreSession,
 }: FooSessionCookiesConfig<SessionType> = {}) {
   return ({
-    cookies,
+    req,
     secretKey,
-  }: FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType> => ({
+  }: FooAuthSessionInitOptions<SessionType>): FooAuthSession<SessionType> => ({
+    secretKey,
     clearSession() {
-      cookies.set(sessionName, null);
+      req.cookies.set(sessionName, undefined);
     },
 
     hasSession() {
-      return !!cookies.get(sessionName);
+      return req.cookies.has(sessionName);
     },
 
     getSessionToken() {
@@ -44,7 +46,7 @@ export function sessionCookie<SessionType>({
     },
 
     async getSession() {
-      const encrypted = cookies.get(sessionName) ?? "";
+      const encrypted = req.cookies.get(sessionName) ?? "";
       let sessionValue = null;
 
       try {
@@ -69,7 +71,7 @@ export function sessionCookie<SessionType>({
         secretKey,
       });
 
-      cookies.set(sessionName, token);
+      req.cookies.set(sessionName, token);
 
       // do not expore cookie
       return undefined;

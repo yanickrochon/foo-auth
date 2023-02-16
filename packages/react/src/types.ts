@@ -1,38 +1,41 @@
+import type {
+  FooAuthApiCsrfResponse,
+  FooAuthApiSessionResponse,
+  FooAuthApiSignOutResponse,
+} from "@foo-auth/core";
+
 export type CsrfQueryValidation = {
   csrfToken: string;
 };
 
-export type ApiCsrfResponse = {
-  csrfToken: string;
-};
-
-export type ApiSessionResponse<SessionType> = {
-  success: boolean;
-  session: SessionType | null;
-  token?: string | null | undefined;
-  redirect?: string | null | undefined;
-};
-
 export type ApiSignOutResponse = {
   success: boolean;
+  redirect?: string;
 };
 
 export type GetCsrfTokenQuery = {
-  (): Promise<ApiCsrfResponse>;
+  (): Promise<FooAuthApiCsrfResponse>;
+};
+
+export type GetSessionQueryOptions = {
+  autoRedirect?: false;
 };
 
 export type GetSessionQuery<SessionType> = {
-  (): Promise<ApiSessionResponse<SessionType>>;
+  (options?: GetSessionQueryOptions): Promise<
+    FooAuthApiSessionResponse<SessionType>
+  >;
 };
 
 export type GetSignInMutationOptions<Credential> = {
   providerName: string;
   payload: Credential & CsrfQueryValidation;
+  autoRedirect?: false;
 };
 
 export type GetSignInMutation<SessionType> = {
   <Credential>(options: GetSignInMutationOptions<Credential>): Promise<
-    ApiSessionResponse<SessionType>
+    FooAuthApiSessionResponse<SessionType>
   >;
 };
 
@@ -41,7 +44,7 @@ export type GetSignOutMutationOptions = {
 };
 
 export type GetSignOutMutation = {
-  (options: GetSignOutMutationOptions): Promise<ApiSignOutResponse>;
+  (options: GetSignOutMutationOptions): Promise<FooAuthApiSignOutResponse>;
 };
 
 export type SessionProviderQueries<SessionType> = {

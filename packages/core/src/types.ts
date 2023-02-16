@@ -1,27 +1,48 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import type Cookies from "cookies";
 import type { KeyObject } from "crypto";
 
-export interface FooAuthApiRequest extends IncomingMessage {
+export type RequestURL = URL & {
+  basePath: string;
+};
+
+export type FooAuthApiRequest = IncomingMessage & {
+  getURL(): RequestURL | null;
+
+  cookies: {
+    has(key: string): boolean;
+    get(key: string): string | null | undefined;
+    set(key: string, value: string | undefined): void;
+  };
+
   /**
    * Object of `query` values from url
    */
   query: Partial<{
     [key: string]: string | string[];
   }>;
-  body: any;
-}
+
+  body?: any;
+};
+
+export type FooAuthApiCsrfResponse = {
+  csrfToken: string;
+};
+
+export type FooAuthApiSessionResponse<SessionType> = {
+  success: boolean;
+  session: SessionType | null;
+  token?: string | null;
+  redirect?: string;
+};
+
+export type FooAuthApiSignOutResponse = {
+  success: boolean;
+};
 
 export type FooAuthApiResponseValue<SessionType> =
-  | {
-      success: true | false;
-      redirect?: string;
-      session?: SessionType | null;
-      token?: string | null;
-    }
-  | {
-      csrfToken: string;
-    };
+  | FooAuthApiCsrfResponse
+  | FooAuthApiSessionResponse<SessionType>
+  | FooAuthApiSignOutResponse;
 
 /**
  * Next `API` route response
@@ -38,8 +59,6 @@ export type FooAuthApiResponse<SessionType> = ServerResponse & {
 
 export type SecretKey = KeyObject;
 
-type SetSession<SessionType> = {};
-
 export type FooAuthSessionConfig<SessionType, SessionSnapshot = any> = {
   saveSession?(
     session: SessionType
@@ -50,6 +69,8 @@ export type FooAuthSessionConfig<SessionType, SessionSnapshot = any> = {
 };
 
 export type FooAuthSession<SessionType> = {
+  secretKey: SecretKey;
+
   clearSession(): void | PromiseLike<void>;
   hasSession(): boolean;
   getSession(): SessionType | null | PromiseLike<SessionType | null>;
@@ -72,9 +93,7 @@ export type FooAuthSession<SessionType> = {
 export type FooAuthEndpointOptions<SessionType> = {
   req: FooAuthApiRequest;
   res: FooAuthApiResponse<SessionType>;
-  cookies: Cookies;
   session: FooAuthSession<SessionType>;
-  secretKey: SecretKey;
 };
 
 export type FooAuthEndpointHandler<SessionType> = {
@@ -96,15 +115,16 @@ export type FooAuthProvider<SessionType> = {
   (endpointPath: FooAuthEndpoints): FooAuthEndpointHandlers<SessionType>;
 };
 
-export type FooAuthSessionInitArg<SessionType> = {
+export type FooAuthSessionInitOptions<SessionType> = {
   req: FooAuthApiRequest;
   res: FooAuthApiResponse<SessionType>;
-  cookies: Cookies;
   secretKey: SecretKey;
 };
 
 export type FooSessionInit<SessionType> = {
-  (args: FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType>;
+  (
+    options: FooAuthSessionInitOptions<SessionType>
+  ): FooAuthSession<SessionType>;
 };
 
 export type FooAuthEndpoints = {

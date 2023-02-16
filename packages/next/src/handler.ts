@@ -1,4 +1,4 @@
-import { Cookies, getEndpoints } from "@foo-auth/core";
+import { getEndpoints } from "@foo-auth/core";
 
 import { serverApiAdapter } from "./server-adapter";
 
@@ -9,6 +9,7 @@ export function fooAuthNext<SessionType = any>({
   session,
   providers,
   endpointPaths,
+  //pages,
   secretKey,
 }: NextFooAuthConfig<SessionType>) {
   const endpoints = getEndpoints({
@@ -25,14 +26,11 @@ export function fooAuthNext<SessionType = any>({
 
     if (endpoint) {
       const { req, res } = serverApiAdapter<SessionType>(_req, _res);
-      const cookies = new Cookies(_req, _res);
 
       await endpoint({
         req,
         res,
-        cookies,
-        session: session({ req, res, cookies, secretKey }) as any,
-        secretKey,
+        session: session({ req, res, secretKey }),
       });
     }
 

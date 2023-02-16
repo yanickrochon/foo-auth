@@ -22,12 +22,7 @@ export function email<Credentials, SessionType>({
   SessionType
 >): FooAuthProvider<SessionType> {
   return (endpointPath: FooAuthEndpoints) => ({
-    [`${endpointPath.signIn}/${name}`]: async ({
-      req,
-      res,
-      session,
-      secretKey,
-    }) => {
+    [`${endpointPath.signIn}/${name}`]: async ({ req, res, session }) => {
       const { csrfToken, ...credentials } = req.body;
       const { r: redirect } = req.query;
       const token = Array.isArray(csrfToken)
@@ -38,9 +33,13 @@ export function email<Credentials, SessionType>({
         const sessionValue = await authenticate(credentials as Credentials);
 
         if (sessionValue) {
-          const emailToken = jwtEncode({ sessionValue, redirect }, secretKey, {
-            maxTokenAge,
-          });
+          const emailToken = jwtEncode(
+            { sessionValue, redirect },
+            session.secretKey,
+            {
+              maxTokenAge,
+            }
+          );
 
           console.log("Email validation token:", emailToken);
 
@@ -65,7 +64,6 @@ export function email<Credentials, SessionType>({
       req,
       res,
       session,
-      secretKey,
     }) => {
       const { emailToken } = req.query;
 
@@ -76,7 +74,7 @@ export function email<Credentials, SessionType>({
             : emailToken ?? "";
 
           const { sessionValue, redirect } =
-            (jwtDecode(token, secretKey) as any) ?? {};
+            (jwtDecode(token, session.secretKey) as any) ?? {};
 
           if (sessionValue) {
             const token = await session.setSession(sessionValue);

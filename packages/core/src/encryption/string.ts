@@ -14,14 +14,14 @@ const TEXT_ENCODING = "utf-8";
 
 const SECRET_MIN_LENGTH = 32;
 
-export interface EncryptionArg {
+export interface EncryptionOptions {
   text: string;
   secretKey: SecretKey;
 }
 
 export type EntryptionValue = string;
 
-export interface DecryptionArg {
+export interface DecryptionOptions {
   encrypted: string;
   secretKey: SecretKey;
 }
@@ -49,7 +49,7 @@ export function createSecretKey(secret: string): SecretKey {
 export function encryptString({
   text,
   secretKey,
-}: EncryptionArg): EntryptionValue {
+}: EncryptionOptions): EntryptionValue {
   const iv = randomBytes(IV_LENGTH);
   const cipher = createCipheriv(ALGORITHM, secretKey, iv);
   return Buffer.concat([cipher.update(text), cipher.final(), iv]).toString(
@@ -65,7 +65,7 @@ export function encryptString({
 export function decryptString({
   encrypted,
   secretKey,
-}: DecryptionArg): DecryptionValue {
+}: DecryptionOptions): DecryptionValue {
   try {
     const binaryData = Buffer.from(encrypted, TOKEN_ENCODING);
     const iv = binaryData.subarray(-IV_LENGTH);

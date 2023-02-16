@@ -8,7 +8,7 @@ const TOKEN_ENCODING = "base64";
 
 export type CSRFToken = string;
 
-export interface VerifyCSRFTokenArg {
+export interface VerifyCSRFTokenVariables {
   token: string;
 }
 
@@ -43,7 +43,7 @@ export function createCSRFToken(): CSRFToken {
  */
 export function verifyCSRFToken({
   token,
-}: VerifyCSRFTokenArg): CSRFTokenVerified {
+}: VerifyCSRFTokenVariables): CSRFTokenVerified {
   if (token) {
     const [signature, tokenHash] = token?.split(TOKEN_SEPARATOR) ?? [];
     const tokenHashVerify = createCSRFTokenHash(signature);

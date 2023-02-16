@@ -6,10 +6,14 @@ export function csrfEndpoints<SessionType>({
   csrfToken,
 }: FooAuthEndpoints): FooAuthEndpointHandlers<SessionType> {
   return {
-    [csrfToken]: ({ res }) => {
-      const csrfToken = createCSRFToken();
+    [csrfToken]: ({ req, res }) => {
+      if (req.method === "GET") {
+        const csrfToken = createCSRFToken();
 
-      res.status(200).send({ csrfToken });
+        res.status(200).send({ csrfToken });
+      } else {
+        res.status(405).end();
+      }
     },
   };
 }

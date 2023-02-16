@@ -1,7 +1,7 @@
 import { jwtEncode, jwtDecode } from "../encryption/jwt";
 
 import type {
-  FooAuthSessionInitArg,
+  FooAuthSessionInitOptions,
   FooAuthSession,
   FooAuthSessionConfig,
   FooAuthApiRequest,
@@ -42,7 +42,9 @@ export function sessionJwt<SessionType, SessionSnapshot = any>({
   return ({
     req,
     secretKey,
-  }: FooAuthSessionInitArg<SessionType>): FooAuthSession<SessionType> => ({
+  }: FooAuthSessionInitOptions<SessionType>): FooAuthSession<SessionType> => ({
+    secretKey,
+
     clearSession() {
       /* nothing */
     },

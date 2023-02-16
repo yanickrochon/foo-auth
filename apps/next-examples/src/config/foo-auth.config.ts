@@ -2,7 +2,7 @@ import { sessionCookie, createSecretKey } from "@foo-auth/core";
 
 import { credentials } from "@foo-auth/provider-credentials";
 
-import { endpointPaths, secret } from "../../foo-auth.config";
+import { endpointPaths, pages, secret } from "../../foo-auth.config";
 
 import type { NextFooAuthConfig } from "@foo-auth/next";
 
@@ -39,6 +39,7 @@ const findUser = (predicate: (user: UserData) => boolean) => {
 
 export const fooAuthConfig: NextFooAuthConfig<SessionType> = {
   endpointPaths,
+  pages,
 
   session: sessionCookie({
     saveSession(sessionValue) {

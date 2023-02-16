@@ -1,16 +1,17 @@
-import type { IncomingMessage, ServerResponse } from "http";
-
-import { Cookies, FooAuthEndpoints } from "@foo-auth/core";
+import {
+  FooAuthEndpoints,
+  clearRedirect,
+  getRedirect,
+  setRedirect,
+} from "@foo-auth/core";
 
 import { serverPageAdapter } from "./server-adapter";
-import { getRedirect, setRedirect } from "./util/redirect";
 
-import type { GetServerSidePropsResult } from "next";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import type { NextFooAuthConfig } from "./types";
 
-export type SessionPagePropsArg<SessionType> = {
-  req: IncomingMessage;
-  res: ServerResponse<IncomingMessage>;
+export type SessionPagePropsOptions<SessionType> = {
+  context: GetServerSidePropsContext;
   config: NextFooAuthConfig<SessionType>;
 };
 
@@ -24,41 +25,52 @@ export type SessionPagePropsCallback<SessionType> = {
 };
 
 export async function getSessionPageProps<SessionType>(
-  { req: _req, res: _res, config }: SessionPagePropsArg<SessionType>,
+  { context, config }: SessionPagePropsOptions<SessionType>,
   callback: SessionPagePropsCallback<SessionType>
 ): Promise<GetServerSidePropsResult<any>> {
-  const { req, res } = serverPageAdapter(_req, _res);
-  const cookies = new Cookies(_req, _res);
+  const { req, res } = serverPageAdapter(context);
   const session = config.session({
     req,
     res,
-    cookies,
     secretKey: config.secretKey,
   });
 
   const hasSession = session.hasSession();
   let redirect = null;
 
-  //console.log( _req );
+  // assume that favicon.ico is missing if we see this
+  if (req.url === "/favicon.ico") {
+    return {
+      notFound: true,
+    };
+  } else {
+    const url = req.getURL();
 
-  if (hasSession) {
-    redirect = getRedirect(cookies);
-  } else if (config.pages?.signin) {
-    //if (req.url && req.url !== config.pages.signin && req.url !== config.pages.signout && req.url !== config.pages.verify) {
-    //  setRedirect(req.url, cookies);
-    //}
-    //redirect = config.pages.signin;
+    //console.log("***", hasSession, url?.pathname, config.pages?.signin);
+
+    if (hasSession) {
+      redirect = getRedirect(req);
+      clearRedirect(req);
+    } else if (
+      url &&
+      config.pages?.signin &&
+      !url.pathname.startsWith(config.pages.signin)
+    ) {
+      setRedirect(url.href, req);
+      redirect = `${url.origin}${url.basePath}${config.pages.signin}`;
+    }
+
+    return redirect
+      ? {
+          redirect: {
+            statusCode: 307,
+            destination: redirect,
+            basePath: false,
+          },
+        }
+      : callback({
+          session: await session.getSession(),
+          endpointPaths: config.endpointPaths,
+        });
   }
-
-  return redirect
-    ? {
-        redirect: {
-          destination: redirect,
-          permanent: false,
-        },
-      }
-    : callback({
-        session: await session.getSession(),
-        endpointPaths: config.endpointPaths,
-      });
 }
