@@ -1,12 +1,14 @@
 ---
 import Link from "./sidebar/Link.astro";
+
+const basePath = import.meta.env.BASE_URL;
 ---
 
 <div
   class="min-h-full w-80 p-2 border-neutral-600 bg-neutral-800 text-neutral-200"
 >
   <nav class="flex flex-col sticky top-20">
-    <Link href="/">
+    <Link href={`${basePath}`}>
       <i slot="icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
           ><title>About</title><path
@@ -17,7 +19,7 @@ import Link from "./sidebar/Link.astro";
       <span slot="label">About</span>
     </Link>
 
-    <Link href="/learn">
+    <Link href={`${basePath}learn`}>
       <i slot="icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
           ><title>Learn</title><path
@@ -30,7 +32,7 @@ import Link from "./sidebar/Link.astro";
 
     <hr class="my-3 mx-4 border-sky-700" />
 
-    <Link href="/core">
+    <Link href={`${basePath}core`}>
       <i slot="icon"
         ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
           ><title>Core</title><path
@@ -44,7 +46,7 @@ import Link from "./sidebar/Link.astro";
     <section class="pt-4">
       <h2 class="text-neutral-400 mx-2 pb-1">Session management</h2>
 
-      <Link href="/sessions/cookie">
+      <Link href={`${basePath}sessions/cookie`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>Cookie session</title><path
@@ -54,7 +56,7 @@ import Link from "./sidebar/Link.astro";
         </i>
         <span slot="label">Cookie</span>
       </Link>
-      <Link href="/sessions/jwt">
+      <Link href={`${basePath}sessions/jwt`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>JSON Web Token-outline</title><path
@@ -69,7 +71,7 @@ import Link from "./sidebar/Link.astro";
     <section class="pt-4">
       <h2 class="text-neutral-400 mx-2 pb-1">Authentication methods</h2>
 
-      <Link href="/providers/credentials">
+      <Link href={`${basePath}providers/credentials`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>Credentials</title><path
@@ -79,7 +81,7 @@ import Link from "./sidebar/Link.astro";
         </i>
         <span slot="label">Credentials</span>
       </Link>
-      <Link href="/providers/email">
+      <Link href={`${basePath}providers/email`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>Email</title><path
@@ -89,7 +91,7 @@ import Link from "./sidebar/Link.astro";
         </i>
         <span slot="label">Email</span>
       </Link>
-      <Link href="/providers/oath">
+      <Link href={`${basePath}providers/oath`}>
         <i slot="icon"
           ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>OAth</title><path
@@ -103,7 +105,7 @@ import Link from "./sidebar/Link.astro";
 
     <section class="pt-4">
       <h2 class="text-neutral-400 mx-2 pb-1">Backend Integration</h2>
-      <Link href="/integration/next">
+      <Link href={`${basePath}integration/next`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <title>Next.js</title>
@@ -131,7 +133,7 @@ import Link from "./sidebar/Link.astro";
 
     <section class="pt-4">
       <h2 class="text-neutral-400 mx-2 pb-1">Frontend Integration</h2>
-      <Link href="/integration/react">
+      <Link href={`${basePath}integration/react`}>
         <i slot="icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             ><title>React</title><path

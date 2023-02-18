@@ -6,6 +6,8 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://yanickrochon.github.io",
+  base: "/foo-auth",
   integrations: [
     mdx({
       syntaxHighlight: "shiki",

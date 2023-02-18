@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:docs": "turbo run build --scope=\"@foo-auth/docs\"",
     "dev": "turbo run dev --parallel",
     "docs": "turbo run dev --scope=\"@foo-auth/docs\"",
     "lint": "turbo run lint",
