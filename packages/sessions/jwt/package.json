@@ -1,8 +1,8 @@
 {
-  "name": "@foo-auth/react",
-  "version": "0.0.3-alpha",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "name": "@foo-auth/session-jwt",
+  "version": "0.0.1-alpha",
+  "main": "./dist/jwt.js",
+  "types": "./dist/jwt.d.ts",
   "license": "ISC",
   "files": [
     "/dist"
@@ -15,18 +15,13 @@
   "dependencies": {
     "@foo-auth/core": "workspace:*"
   },
-  "peerDependencies": {
-    "react": "^18.2.0"
-  },
   "devDependencies": {
     "@foo-auth/config-eslint": "*",
     "@foo-auth/tsconfig": "*",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.13.0",
-    "@types/react": "^18.0.28",
     "eslint": "^8.34.0",
     "jest": "^29.4.3",
-    "react": "^18.2.0",
     "ts-jest": "^29.0.3",
     "tsconfig": "*",
     "typescript": "^4.9.5"

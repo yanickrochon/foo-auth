@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
+    "docs": "turbo run dev --scope=\"@foo-auth/docs\"",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "test": "turbo run test",
@@ -12,12 +13,18 @@
   "devDependencies": {
     "@foo-auth/config-eslint": "*",
     "prettier": "^2.8.4",
-    "turbo": "^1.7.4"
+    "turbo": "^1.8.0"
   },
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=7.25.0",
     "yarn": "please use pnpm"
   },
-  "packageManager": ">=pnpm@7.25.0"
+  "packageManager": ">=pnpm@7.25.0",
+  "pnpm": {
+    "overrides": {
+      "got@<11.8.5": ">=11.8.5",
+      "trim@<0.0.3": ">=0.0.3"
+    }
+  }
 }

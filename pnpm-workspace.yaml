@@ -1,5 +1,6 @@
 packages:
-  - apps/next-examples
+  - apps/docs
+  - apps/next-example
   - packages/config/eslint-custom
   - packages/config/tsconfig
   - packages/core
@@ -7,3 +8,5 @@ packages:
   - packages/react
   - packages/providers/credentials
   - packages/providers/email
+  - packages/sessions/cookie
+  - packages/sessions/jwt

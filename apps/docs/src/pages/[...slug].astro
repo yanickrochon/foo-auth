@@ -1,0 +1,29 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../content/styles.css";
+
+export async function getStaticPaths() {
+  const docBasePath = "src/content/";
+  const allDocs = await Astro.glob("../content/**/*.mdx");
+
+  return allDocs.map((doc) => {
+    const url = doc.url ?? "";
+    const slug = url.substring(docBasePath.length, url.length - 4);
+
+    return {
+      props: { doc },
+      params: { slug },
+    };
+  });
+}
+
+const { doc } = Astro.props;
+
+if (!doc) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = doc;
+---
+
+<Layout title="Learn - Foo Authentication"><Content /></Layout>

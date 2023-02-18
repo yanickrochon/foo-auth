@@ -1,0 +1,28 @@
+---
+import clsx from "clsx";
+export interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+const isCurrentPath =
+  href.length >= Astro.url.pathname.length &&
+  Astro.url.pathname.startsWith(href);
+---
+
+<a
+  href={href}
+  class={clsx(
+    "flex items-center space-x-1 rounded-md px-2 py-1 hover:bg-gradient-to-b hover:from-sky-800 hover:to-sky-900",
+    {
+      "hover:text-sky-200 fill-neutral-100 hover:fill-sky-200 gap-2": true,
+      "text-yellow-200 fill-yellow-200 hover:text-yellow-300 hover:fill-yellow-300":
+        isCurrentPath,
+    }
+  )}
+>
+  <span class="w-5 h-5">
+    <slot name="icon" />
+  </span>
+  <span><slot name="label" /></span>
+</a>

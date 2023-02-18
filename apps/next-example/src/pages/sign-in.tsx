@@ -184,6 +184,7 @@ const AuthenticationType = () => {
             className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
             value="cookies"
             checked
+            readOnly
           />
         </div>
         <div className="text-sm ml-3">

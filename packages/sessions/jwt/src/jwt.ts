@@ -1,11 +1,11 @@
-import { jwtEncode, jwtDecode } from "../encryption/jwt";
-
-import type {
-  FooAuthSessionInitOptions,
-  FooAuthSession,
-  FooAuthSessionConfig,
-  FooAuthApiRequest,
-} from "../types";
+import {
+  jwtEncode,
+  jwtDecode,
+  type FooAuthSessionInitOptions,
+  type FooAuthSession,
+  type FooAuthSessionConfig,
+  type FooAuthApiRequest,
+} from "@foo-auth/core";
 
 export type FooSessionJwtConfig<SessionType, SessionSnapshot = any> = {
   issuer: string;

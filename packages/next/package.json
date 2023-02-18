@@ -13,7 +13,7 @@
     "lint": "TIMING=1 eslint \"**/*.ts*\""
   },
   "dependencies": {
-    "@foo-auth/core": "*"
+    "@foo-auth/core": "workspace:**"
   },
   "peerDependencies": {
     "next": "^13.0.7"

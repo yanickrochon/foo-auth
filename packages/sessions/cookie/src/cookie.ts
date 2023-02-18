@@ -1,13 +1,12 @@
 //import * as jose from 'jose';
 
-import { Console } from "console";
-import { encryptString, decryptString } from "../encryption/string";
-
-import type {
-  FooAuthSessionInitOptions,
-  FooAuthSession,
-  FooAuthSessionConfig,
-} from "../types";
+import {
+  encryptString,
+  decryptString,
+  type FooAuthSessionInitOptions,
+  type FooAuthSession,
+  type FooAuthSessionConfig,
+} from "@foo-auth/core";
 
 export type FooSessionCookiesConfig<SessionType, SessionSnapshot = any> = {
   sessionName?: string;

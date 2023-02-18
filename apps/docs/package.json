@@ -1,0 +1,29 @@
+{
+  "name": "@foo-auth/docs",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1-alpha",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && tsc --noEmit && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^0.17.0",
+    "@astrojs/tailwind": "^3.0.1",
+    "astro": "^2.0.13",
+    "clsx": "^1.2.1",
+    "postcss": "^8.4.21",
+    "rehype-preset-minify": "^6.0.0",
+    "remark-toc": "^8.0.1",
+    "rollup": "^3.16.0",
+    "tailwindcss": "^3.2.7"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4",
+    "prettier-plugin-astro": "^0.8.0",
+    "prettier-plugin-tailwindcss": "^0.2.3"
+  }
+}

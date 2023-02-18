@@ -1,8 +1,11 @@
-# Foo Auth Next.js Examples
+# Foo Auth for Next.js Example
 
 This example showcases using the authentication module
-inside a Next application. For a fully working demo, go
-to the workspace's root, and run:
+inside a Next application.
+
+## Usage
+
+At the workspace's root :
 
 ```
 $ pnpm dev

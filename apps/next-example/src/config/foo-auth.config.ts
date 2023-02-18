@@ -1,4 +1,5 @@
-import { sessionCookie, createSecretKey } from "@foo-auth/core";
+import { createSecretKey } from "@foo-auth/core";
+import { sessionCookie } from "@foo-auth/session-cookie";
 
 import { credentials } from "@foo-auth/provider-credentials";
 
