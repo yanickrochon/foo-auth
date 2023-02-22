@@ -159,7 +159,7 @@ export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
     },
     async restoreSession(snapshot) {
       const user = snapshot?.sub
-        ? Users.getById(snapshot.sub, {
+        ? await Users.getById(snapshot.sub, {
             password: false, // do not retrieve password
           })
         : null;
@@ -172,7 +172,7 @@ export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
   providers: [
     credentials<UserCredentials, UserSession>({
       async authenticate(credentials: UserCredentials) {
-        const user = Users.findOne(
+        const user = await Users.findOne(
           {
             username: credentials.username,
             password: credentials.password,
@@ -223,6 +223,8 @@ fetch("/api/csrf-token")
 
 Let's have a welcome page to see who is signed-in.
 
+### Home Page
+
 <CodeHeader label="./src/pages/index.tsx" />
 
 ```tsx
@@ -251,8 +253,6 @@ export default function IndexPage() {
     ? `${session.user.firstName} ${session.user.lastName}`
     : "Guest";
 
-  console.log(session);
-
   return (
     <>
       <h2 className="text-2xl">Hello {fullName} !</h2>
@@ -269,23 +269,95 @@ In order to use the `useSession` hook, the session provider needs to be rendered
 ```tsx
 import { SessionProvider } from "@foo-auth/react";
 
+import { QueryClient, QueryClientProvider } from "react-query";
+
 import type { FooAuthPageProps } from "@foo-auth/next";
 import type { UserSession } from "../types/foo-auth";
 import type { AppType } from "next/app";
+
+const queryClient = new QueryClient();
 
 const FooAuthApp: AppType<FooAuthPageProps<UserSession>> = ({
   Component,
   pageProps: { session, endpointPaths, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session} endpointPaths={endpointPaths}>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={session} endpointPaths={endpointPaths}>
+        <Component {...pageProps} />
+      </SessionProvider>
+    </QueryClientProvider>
   );
 };
 
 export default FooAuthApp;
 ```
+
+### Sign In Page
+
+<CodeHeader label="./src/pages/sign-in.tsx" />
+
+```tsx
+import { useMutation, useQuery, useQueryClient } from "react-query";
+
+import { withServerSideAuthProps } from "@foo-auth/next";
+import { useSessionQueries } from "@foo-auth/react";
+
+import { fooAuthOptions } from "../foo-auth.next";
+import UserCredentialsForm from "../components/UserCredentialsForm";
+
+import type { UserSession, UserCredentials } from "../types/foo-auth";
+
+export const getServerSideProps = withServerSideAuthProps<UserSession>(
+  fooAuthOptions,
+  async (context) => {
+    return {
+      props: {
+        ...context.sessionProps,
+        // add more props below....
+      },
+    };
+  }
+);
+
+export default function SignInPage() {
+  const queryClient = useQueryClient();
+  const { csrfTokenQuery, signInMutation } = useSessionQueries<UserSession>();
+
+  const { isLoading: csrfLoading, data: csrfData } = useQuery(
+    ["csrf"],
+    csrfTokenQuery,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const signIn = useMutation(
+    async (variables: GetSignInMutationOptions<UserCredentials>) =>
+      signInMutation(variables),
+    {
+      onSuccess: () => {
+        // Invalidate session
+        queryClient.invalidateQueries("session");
+      },
+    }
+  );
+
+  const handleSubmit = (credentials: UserCredentials) => {
+    signIn.mutate({
+      providerName: "credentials",
+      payload: {
+        ...credentials,
+        ...csrfData,
+      },
+    });
+  };
+
+  return <UserCredentialsForm onSubmit={handleSubmit} />;
+}
+```
+
+That's it! The above example leaves out application-specific implementations, such as the `UserCredentialsForm` component, as well as data persistence.
 
 <BottomNavigation
   previousLink="/foo-auth/"

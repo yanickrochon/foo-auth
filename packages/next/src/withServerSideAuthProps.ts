@@ -33,7 +33,7 @@ export type GetServerSideAuthProps<
   }
 ) => Promise<GetServerSidePropsResult<P>>;
 
-export async function withServerSideAuthProps<SessionType>(
+export function withServerSideAuthProps<SessionType>(
   options: NextFooAuthOptions<SessionType>,
   pagePropsHandler: GetServerSideAuthProps<SessionType>
 ) {

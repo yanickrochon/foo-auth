@@ -23,8 +23,6 @@ export default function IndexPage() {
     ? `${session.user.firstName} ${session.user.lastName}`
     : "Guest";
 
-  console.log(session);
-
   return (
     <>
       <h2 className="text-2xl">Hello {fullName} !</h2>

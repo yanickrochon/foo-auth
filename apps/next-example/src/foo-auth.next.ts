@@ -17,9 +17,9 @@ import type {
 } from "./types/foo-auth";
 
 const convertSessionType = (user: User | null): UserSession => {
-  const sessionValue = { ...user } as any;
-  delete sessionValue.password;
-  return sessionValue;
+  const sessionValue = Object.assign({}, user as Omit<User, "password">);
+  delete (sessionValue as any).password;
+  return { user: sessionValue };
 };
 
 const findUser = (predicate: (user: User) => boolean) => {
@@ -43,7 +43,7 @@ export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
     restoreSession(snapshot) {
       const user = findUser((user) => user.id === snapshot?.sub);
 
-      return convertSessionType(user);
+      return user ? convertSessionType(user) : null;
     },
   }),
 
@@ -56,11 +56,7 @@ export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
             user.password === credentials.password
         );
 
-        if (user) {
-          return convertSessionType(user);
-        } else {
-          return null;
-        }
+        return user ? convertSessionType(user) : null;
       },
     }),
   ],
