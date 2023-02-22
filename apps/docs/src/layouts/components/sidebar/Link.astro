@@ -8,9 +8,11 @@ const { href } = Astro.props;
 const isCurrentPath =
   href.length >= Astro.url.pathname.length &&
   Astro.url.pathname.startsWith(href);
+const pathname = Astro.url.pathname;
 ---
 
 <a
+  title={pathname}
   href={href}
   class={clsx(
     "flex items-center space-x-1 rounded-md px-2 py-1 hover:bg-gradient-to-b hover:from-sky-800 hover:to-sky-900",
