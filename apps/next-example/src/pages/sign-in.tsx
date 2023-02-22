@@ -4,11 +4,9 @@ import clsx from "clsx";
 import z from "zod";
 
 import { getSessionPageProps } from "@foo-auth/next";
-import {
-  fooAuthConfig,
-  type UserCredentials,
-  type SessionType,
-} from "../config/foo-auth.config";
+import { fooAuthOptions } from "../foo-auth.next";
+
+import type { UserSession, UserCredentials } from "../types/foo-auth";
 
 import type { GetServerSideProps } from "next";
 
@@ -26,7 +24,7 @@ const payloadValidation = z.object({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return getSessionPageProps(
-    { context, config: fooAuthConfig },
+    { context, config: fooAuthOptions },
     async (sessionPageProps) => ({
       props: {
         ...sessionPageProps,
@@ -38,8 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function SignInPage() {
   const queryClient = useQueryClient();
-  const { csrfTokenQuery, sessionQuery, signInMutation, signOutMutation } =
-    useSessionQueries<SessionType>();
+  const { csrfTokenQuery, signInMutation } = useSessionQueries<UserSession>();
 
   const { isLoading: csrfLoading, data: csrfData } = useQuery(
     ["csrf"],
@@ -60,12 +57,12 @@ export default function SignInPage() {
       },
     }
   );
-  const handleSignOut = useMutation(signOutMutation, {
-    onSuccess: () => {
-      // Invalidate session
-      queryClient.invalidateQueries("session");
-    },
-  });
+  // const handleSignOut = useMutation(signOutMutation, {
+  //   onSuccess: () => {
+  //     // Invalidate session
+  //     queryClient.invalidateQueries("session");
+  //   },
+  // });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,18 +72,12 @@ export default function SignInPage() {
     const authType = data.authType as string;
     const payload = payloadValidation.parse(data);
 
-    console.log(typeof authType, authType, payload);
-
     signIn.mutate(
       {
         providerName: "credentials",
         payload,
-      },
-      {
-        onSuccess(data) {
-          console.log("*** SUCCESS", data);
-        },
       }
+      //{ onSuccess(data) { } }
     );
   };
 
@@ -181,7 +172,7 @@ const AuthenticationType = () => {
             name="authType"
             aria-describedby="authTypeCookie"
             type="radio"
-            className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
+            className="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 rounded h-4 w-4"
             value="cookies"
             checked
             readOnly

@@ -8,11 +8,11 @@ import {
 import { serverPageAdapter } from "./server-adapter";
 
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import type { NextFooAuthConfig } from "./types";
+import type { NextFooAuthOptions } from "./types";
 
 export type SessionPagePropsOptions<SessionType> = {
   context: GetServerSidePropsContext;
-  config: NextFooAuthConfig<SessionType>;
+  config: NextFooAuthOptions<SessionType>;
 };
 
 export type SessionPageProps<SessionType> = {

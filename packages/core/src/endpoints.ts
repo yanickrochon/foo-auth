@@ -5,14 +5,26 @@ import { csrfEndpoints } from "./api/csrf";
 import type { FooAuthProvider, FooAuthEndpoints } from "./types";
 
 export type GetEndpointOptions<SessionType> = {
-  endpointPaths: FooAuthEndpoints;
+  endpointPaths?: FooAuthEndpoints;
   providers: FooAuthProvider<SessionType>[];
+};
+
+const DEFAULT_ENDPOINTS: FooAuthEndpoints = {
+  callback: "/callback", // the return URL for external providers
+  csrfToken: "/csrf-token", // the
+  session: "/session",
+  signIn: "/sign-in",
+  signOut: "/sign-out",
 };
 
 export function getEndpoints<SessionType>({
   endpointPaths,
   providers,
 }: GetEndpointOptions<SessionType>) {
+  endpointPaths = Object.assign<FooAuthEndpoints, FooAuthEndpoints>(
+    DEFAULT_ENDPOINTS,
+    endpointPaths || {}
+  );
   const endpoints = {
     ...authEndpoints(endpointPaths),
     ...sessionEndpoints(endpointPaths),

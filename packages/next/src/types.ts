@@ -12,7 +12,7 @@ export type FooAuthPages = {
   verify?: string | null | undefined;
 };
 
-export type NextFooAuthConfig<SessionType> = {
+export type NextFooAuthOptions<SessionType> = {
   session: FooSessionInit<SessionType>;
   providers: FooAuthProvider<SessionType>[];
   endpointPaths: FooAuthEndpoints;

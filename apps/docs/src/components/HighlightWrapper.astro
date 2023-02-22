@@ -1,0 +1,26 @@
+---
+import clsx from "clsx";
+
+export interface Props {
+  status?: "info" | "warning" | "error";
+}
+
+const { status = "info" } = Astro.props;
+---
+
+<div
+  class={clsx("flex border-2 my-8 px-4 pb-2", {
+    "bg-green-800 border-green-500 text-green-100 fill-green-100":
+      status === "info",
+    "bg-amber-800 border-amber-500-500 text-amber-100 fill-amber-100":
+      status === "warning",
+    "bg-red-900 border-red-500 text-red-100 fill-red-100": status === "error",
+  })}
+>
+  <div class="flex-0 pt-3 pr-3">
+    <slot name="icon" />
+  </div>
+  <div class="flex-1">
+    <slot name="content" />
+  </div>
+</div>

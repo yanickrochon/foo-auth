@@ -1,5 +1,5 @@
 import type { FooAuthEndpoints } from "@foo-auth/core";
-import { FooAuthPages } from "@foo-auth/next";
+import type { FooAuthPages } from "@foo-auth/next";
 
 export const endpointPaths: FooAuthEndpoints = {
   callback: "/callback",

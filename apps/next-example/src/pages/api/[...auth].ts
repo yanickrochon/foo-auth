@@ -1,5 +1,5 @@
 import { fooAuthNext } from "@foo-auth/next";
 
-import { fooAuthConfig } from "../../config/foo-auth.config";
+import { fooAuthOptions } from "../../foo-auth.next";
 
-export default fooAuthNext(fooAuthConfig);
+export default fooAuthNext(fooAuthOptions);

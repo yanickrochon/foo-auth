@@ -14,7 +14,8 @@
   "devDependencies": {
     "@foo-auth/config-eslint": "*",
     "prettier": "^2.8.4",
-    "turbo": "^1.8.0"
+    "prettier-plugin-tailwindcss": "^0.2.3",
+    "turbo": "^1.8.1"
   },
   "engines": {
     "node": ">=16.0.0",

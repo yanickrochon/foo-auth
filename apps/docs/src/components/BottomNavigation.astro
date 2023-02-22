@@ -1,0 +1,62 @@
+---
+export interface Props {
+  previousLink: string;
+  previousLabel: string;
+
+  nextLink: string;
+  nextLabel: string;
+}
+
+const { previousLabel, previousLink, nextLabel, nextLink } = Astro.props;
+---
+
+<div class="flex justify-between pt-16 px-8">
+  {
+    previousLink ? (
+      <div class="flex flex-1 justify-start">
+        <a
+          class="flex rounded-lg border-2 border-sky-300 text-sky-50 fill-sky-50 hover:border-sky-400 hover:text-sky-300 hover:fill-sky-300 py-3 pl-1 pr-12"
+          href={previousLink}
+        >
+          <div class="flex pr-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              class="w-10 h-10 m-auto"
+            >
+              <title>Previous Page</title>
+              <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-sm text-sky-300">Previous</div>
+            <div class="text-lg">{previousLabel}</div>
+          </div>
+        </a>
+      </div>
+    ) : null
+  }
+  {
+    nextLink ? (
+      <div class="flex flex-1 justify-end">
+        <a
+          class="flex rounded-lg border-2 border-sky-300 text-sky-50 fill-sky-50 hover:border-sky-400 hover:text-sky-300 hover:fill-sky-300 py-3 pl-12 pr-1"
+          href={nextLink}
+        >
+          <div class="flex flex-col">
+            <div class="text-sm text-sky-300 text-right">Next</div>
+            <div class="text-lg text-right">{nextLabel}</div>
+          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            class="w-10 h-10 m-auto"
+          >
+            <title>Next Page</title>
+            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+          </svg>
+        </a>
+      </div>
+    ) : null
+  }
+</div>

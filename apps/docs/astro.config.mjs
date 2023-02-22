@@ -8,12 +8,13 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   site: "https://yanickrochon.github.io",
   base: "/foo-auth",
+
   integrations: [
     mdx({
       syntaxHighlight: "shiki",
       shikiConfig: { theme: "dracula" },
-      remarkPlugins: [remarkToc],
       rehypePlugins: [rehypeMinifyHtml],
+      remarkPlugins: [remarkToc],
       remarkRehype: { footnoteLabel: "Footnotes" },
       gfm: false,
     }),

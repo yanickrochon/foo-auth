@@ -3,7 +3,7 @@ import { getEndpoints } from "@foo-auth/core";
 import { serverApiAdapter } from "./server-adapter";
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { NextFooAuthConfig } from "./types";
+import type { NextFooAuthOptions } from "./types";
 
 export function fooAuthNext<SessionType = any>({
   session,
@@ -11,7 +11,7 @@ export function fooAuthNext<SessionType = any>({
   endpointPaths,
   //pages,
   secretKey,
-}: NextFooAuthConfig<SessionType>) {
+}: NextFooAuthOptions<SessionType>) {
   const endpoints = getEndpoints({
     endpointPaths,
     providers,

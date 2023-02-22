@@ -1,3 +1,227 @@
+import BottomNavigation from "../components/BottomNavigation.astro";
+import HighlightWrapper from "../components/HighlightWrapper.astro";
+import CheckIcon from "../components/icons/Check.astro";
+import InfoIcon from "../components/icons/Info.astro";
+import CodeHeader from "../components/CodeHeader.astro";
+
 # Learn Foo Authentication
 
-_TODO_
+Currently, only [Next.js](/foo-auth/integration/next) with [React](/foo-auth/integration/react) is implemented. The documentation will be updated whenever more integrations are made available.
+
+## Getting started
+
+Install the following dependencies:
+
+- @foo-auth/core
+- @foo-auth/next
+- @foo-auth/provider-credentials
+- @foo-auth/react
+- @foo-auth/session-cookie
+
+## Configuration
+
+First, let's define some environment variables.
+
+<CodeHeader label="./env" />
+
+```ini
+# App origin (defaults to empty, or same origin)
+NEXT_PUBLIC_ORIGIN=http://localhost:3000
+# App base path (defaults to emtpy)
+#NEXT_PUBLIC_BASE_PATH=/foo
+# The path to the API routes under NEXT_PUBLIC_BASE_PATH (defaults to /api)
+#NEXT_PUBLIC_API_PATH=/api
+```
+
+Then, let's define configurations that will be available on both client and server. The following is a detailed congiruation, however not all options are mandatory.
+
+<CodeHeader label="./foo-auth.config.ts" />
+
+```ts
+import type { FooAuthEndpoints } from "@foo-auth/core";
+import type { FooAuthPages } from "@foo-auth/next";
+
+/**
+ * All of the following endpoints are relative to the API path.
+ * For example: "/session" becomes "/api/session" (if base path is empty)
+ *
+ * NOTE : this constant is optional. If not defined, or if any property is not
+ *        defined, then the missing properties will be the following values.
+ */
+export const endpointPaths: FooAuthEndpoints = {
+  callback: "/callback", // the return URL for external providers
+  csrfToken: "/csrf-token", // the CSRF
+  session: "/session",
+  signIn: "/sign-in",
+  signOut: "/sign-out",
+};
+
+/**
+ * All of the following pages are relative to the base path.
+ * For example: "/" remains the same (if base path is empty)
+ *
+ * NOTE : this constant is optional. If not defined, or if any property is not
+ *        defined, then the missing properties will be the following values.
+ */
+export const pages: FooAuthPages = {
+  home: "/",
+  signin: "/sign-in",
+  signout: "/sign-out",
+};
+
+/**
+ * The following value is mandatory and is used to secure CSRF tokens, or
+ * other session variables. Only the first 32 characters will be used.
+ */
+export const secret: string = "... a string of at least 32 characters ...";
+```
+
+<HighlightWrapper>
+<InfoIcon slot="icon" class="w-8 h-8" />
+<div slot="content">
+This configuration may be a `JSON` file as it _must_ only contain data which could be imported on the client side. For server side configuration, please read below.
+
+The minimal configuration is the following:
+
+<CodeHeader label="./foo-auth.config.json" />
+
+```json
+{
+  "secret": "... a string of at least 32 characters ..."
+}
+```
+
+</div>
+</HighlightWrapper>
+
+Lastly, we must define a few interfaces:
+
+<CodeHeader label="./src/types/foo-auth.ts" />
+
+```ts
+import type { User } from "./path/to/models/Users";
+
+/**
+ * The session object returned from the '/session' endpoint
+ */
+export type UserSession = {
+  user: Omit<User, "password"> | null | undefined;
+};
+
+/**
+ * The snapshot of the data saved inside the encrypted session
+ */
+export type SessionSnapshot = {
+  userId: string;
+};
+
+/**
+ * The credential information (if using the credentials provider)
+ */
+export type UserCredentials = {
+  username: string;
+  password: string;
+};
+```
+
+## Next.js Configuration
+
+With the `.env`, types, and configuration defined,, we can add the settings required for the interfaces and endpoints.
+
+<CodeHeader label="./src/foo-auth.next.ts" />
+
+```ts
+import { createSecretKey } from "@foo-auth/core";
+import { sessionCookie } from "@foo-auth/session-cookie";
+
+import { credentials } from "@foo-auth/provider-credentials";
+
+import { endpointPaths, pages, secret } from "../foo-auth.config";
+
+import Users from "./path/to/models/Users";
+
+import type { NextFooAuthOptions } from "@foo-auth/next";
+
+import type {
+  User,
+  SessionSnapshot,
+  UserSession,
+  UserCredentials,
+} from "./types/foo-auth";
+
+export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
+  endpointPaths,
+  pages,
+
+  session: sessionCookie<UserSession, SessionSnapshot>({
+    saveSession(sessionValue) {
+      return { sub: sessionValue.user?.id ?? "" };
+    },
+    async restoreSession(snapshot) {
+      const user = snapshot?.sub
+        ? Users.getById(snapshot.sub, {
+            password: false, // do not retrieve password
+          })
+        : null;
+
+      // returning null will invalidate the session
+      return suer ? { user } : null;
+    },
+  }),
+
+  providers: [
+    credentials<UserCredentials, UserSession>({
+      async authenticate(credentials: UserCredentials) {
+        const user = Users.findOne(
+          {
+            username: credentials.username,
+            password: credentials.password,
+          },
+          {
+            password: false, // do not retrieve password
+          }
+        );
+
+        // returning null will cancel the authentication
+        return user ? { user } : null;
+      },
+    }),
+  ],
+
+  secretKey: createSecretKey(secret),
+};
+```
+
+And now we add the API endpoints:
+
+<CodeHeader label="./src/api/auth/[...auth].ts" />
+
+```ts
+import { fooAuthNext } from "@foo-auth/next";
+
+import { fooAuthOptions } from "../../foo-auth.next";
+
+export default fooAuthNext(fooAuthOptions);
+```
+
+<HighlightWrapper>
+<CheckIcon slot="icon" class="w-8 h-8" />
+<div slot="content">
+At this point, the endpoints should be available for querying. After starting the app, try the CSRF token endpoint.
+
+```js
+fetch("/api/csrf-token")
+  .then((response) => response.json())
+  .then((result) => console.log(result));
+// -> { "csrfToken": "... generated hash ..." }
+```
+
+</div>
+</HighlightWrapper>
+
+<BottomNavigation
+  previousLink="/foo-auth/"
+  previousLabel="About"
+  nextLink="/foo-auth/core"
+  nextLabel="Core"
+/>

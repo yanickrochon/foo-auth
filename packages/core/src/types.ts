@@ -128,9 +128,9 @@ export type FooSessionInit<SessionType> = {
 };
 
 export type FooAuthEndpoints = {
-  signIn: string;
-  signOut: string;
-  callback: string;
-  session: string;
-  csrfToken: string;
+  signIn?: string;
+  signOut?: string;
+  callback?: string;
+  session?: string;
+  csrfToken?: string;
 };

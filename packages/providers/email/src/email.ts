@@ -33,20 +33,17 @@ export function email<Credentials, SessionType>({
         const sessionValue = await authenticate(credentials as Credentials);
 
         if (sessionValue) {
-          const emailToken = jwtEncode(
-            { sessionValue, redirect },
-            session.secretKey,
-            {
-              maxTokenAge,
-            }
-          );
-
-          console.log("Email validation token:", emailToken);
-
+          // const emailToken = jwtEncode(
+          //   { sessionValue, redirect },
+          //   session.secretKey,
+          //   {
+          //     maxTokenAge,
+          //   }
+          // );
+          //console.log("Email validation token:", emailToken);
           // if (redirect) {
           //   res.redirect(307, Array.isArray(redirect) ? redirect[0] : redirect);
           // } else {
-
           //   res.status(200).send({
           //     success: true,
           //     session: sessionValue,

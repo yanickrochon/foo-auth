@@ -3,32 +3,26 @@ import { sessionCookie } from "@foo-auth/session-cookie";
 
 import { credentials } from "@foo-auth/provider-credentials";
 
-import { endpointPaths, pages, secret } from "../../foo-auth.config";
+import { endpointPaths, pages, secret } from "../foo-auth.config";
 
-import type { NextFooAuthConfig } from "@foo-auth/next";
+import data from "./data.json";
 
-import data from "../data.json";
+import type { NextFooAuthOptions } from "@foo-auth/next";
 
-type DataArray<T> = T extends readonly (infer ElementType)[]
-  ? ElementType
-  : never;
+import type {
+  User,
+  SessionSnapshot,
+  UserSession,
+  UserCredentials,
+} from "./types/foo-auth";
 
-export type UserData = DataArray<typeof data.users>;
-
-export type SessionType = Omit<UserData, "password">;
-
-export interface UserCredentials {
-  username: string;
-  password: string;
-}
-
-const convertSessionType = (user: UserData | null): SessionType => {
+const convertSessionType = (user: User | null): UserSession => {
   const sessionValue = { ...user } as any;
   delete sessionValue.password;
   return sessionValue;
 };
 
-const findUser = (predicate: (user: UserData) => boolean) => {
+const findUser = (predicate: (user: User) => boolean) => {
   for (const user of data.users) {
     if (predicate(user)) {
       return user;
@@ -38,23 +32,23 @@ const findUser = (predicate: (user: UserData) => boolean) => {
   return null;
 };
 
-export const fooAuthConfig: NextFooAuthConfig<SessionType> = {
+export const fooAuthOptions: NextFooAuthOptions<UserSession> = {
   endpointPaths,
   pages,
 
-  session: sessionCookie({
+  session: sessionCookie<UserSession, SessionSnapshot>({
     saveSession(sessionValue) {
-      return { id: sessionValue.id };
+      return { sub: sessionValue.user?.id ?? "" };
     },
     restoreSession(snapshot) {
-      const user = findUser((user) => user.id === snapshot.id);
+      const user = findUser((user) => user.id === snapshot?.sub);
 
       return convertSessionType(user);
     },
   }),
 
   providers: [
-    credentials<UserCredentials, SessionType>({
+    credentials<UserCredentials, UserSession>({
       authenticate(credentials: UserCredentials) {
         const user = findUser(
           (user) =>

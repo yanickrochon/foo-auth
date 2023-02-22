@@ -21,11 +21,11 @@ const defaultRestoreSession = <SessionType, SessionSnapshot>(
   x: SessionSnapshot
 ): SessionType => x as any;
 
-export function sessionCookie<SessionType>({
+export function sessionCookie<SessionType, SessionSnapshot>({
   sessionName = DEFAULT_SESSION_COOKIE_NAME,
   saveSession = defaultSaveSession,
   restoreSession = defaultRestoreSession,
-}: FooSessionCookiesConfig<SessionType> = {}) {
+}: FooSessionCookiesConfig<SessionType, SessionSnapshot> = {}) {
   return ({
     req,
     secretKey,

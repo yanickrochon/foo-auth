@@ -1,5 +1,4 @@
 ---
-import Header from "./components/Header.astro";
 import Sidebar from "./components/Sidebar.astro";
 
 export interface Props {
@@ -18,14 +17,17 @@ const { title } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="bg-neutral-900">
+  <body class="min-h-screen bg-neutral-900">
     <div class="min-h-screen w-full" x-data="layout">
-      <Header />
-
-      <div class="flex min-h-screen pt-14">
+      <div class="flex min-h-screen">
         <Sidebar />
-        <main class="w-full bg-neutral-700 text-neutral-100 p-4">
-          <slot />
+
+        <main
+          class="flex justify-center w-full bg-neutral-700 text-neutral-100 px-4 pt-8 pb-40"
+        >
+          <div class="w-full max-w-4xl">
+            <slot />
+          </div>
         </main>
       </div>
     </div>
@@ -34,7 +36,7 @@ const { title } = Astro.props;
 
 <style>
   body {
-    scrollbar-width: thin;
+    scrollbar-width: 0.75em;
     scrollbar-color: rgb(12, 64, 110) rgb(20, 31, 37);
   }
   body::-webkit-scrollbar-track {
@@ -49,10 +51,11 @@ const { title } = Astro.props;
       rgb(20, 31, 37),
       rgb(30, 41, 47)
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    border-radius: 10px;
+    border-radius: 0.7em;
   }
   body::-webkit-scrollbar {
-    width: 10px;
+    width: 0.75em;
+    height: 0.75em;
   }
   body::-webkit-scrollbar-thumb {
     background: rgb(12, 64, 110); /* fallback for old browsers */
@@ -66,6 +69,6 @@ const { title } = Astro.props;
       rgb(12, 64, 110),
       rgb(12, 64, 110)
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    border-radius: 10px;
+    border-radius: 0.5em;
   }
 </style>

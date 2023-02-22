@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "pnpm run docs",
+      "name": "Run Documentation server (dev)",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}

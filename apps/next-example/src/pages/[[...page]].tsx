@@ -3,24 +3,14 @@
 // import clsx from "clsx";
 
 import { getSessionPageProps } from "@foo-auth/next";
-import {
-  fooAuthConfig,
-  //type UserCredentials,
-  //type SessionType,
-} from "../config/foo-auth.config";
+import { fooAuthOptions } from "../foo-auth.next";
 
 import { useRouter } from "next/router";
-import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-//import type { SyntheticEvent } from "react";
-
-// import {
-//   useSessionQueries,
-//   type GetSignInMutationOptions,
-// } from "@foo-auth/react";
+import type { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return getSessionPageProps(
-    { context, config: fooAuthConfig },
+    { context, config: fooAuthOptions },
     async (sessionPageProps) => ({
       props: {
         ...sessionPageProps,
