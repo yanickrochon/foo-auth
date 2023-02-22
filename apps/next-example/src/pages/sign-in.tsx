@@ -1,38 +1,31 @@
+import React from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import clsx from "clsx";
-import z from "zod";
 
-import { getSessionPageProps } from "@foo-auth/next";
+import { withServerSideAuthProps } from "@foo-auth/next";
 import { fooAuthOptions } from "../foo-auth.next";
-
-import type { UserSession, UserCredentials } from "../types/foo-auth";
-
-import type { GetServerSideProps } from "next";
 
 import {
   useSessionQueries,
   type GetSignInMutationOptions,
 } from "@foo-auth/react";
-import React from "react";
 
-const payloadValidation = z.object({
-  username: z.string().min(3),
-  password: z.string().min(4),
-  csrfToken: z.string(),
-});
+import { credentialsValidation } from "../schema/foo-auth";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getSessionPageProps(
-    { context, config: fooAuthOptions },
-    async (sessionPageProps) => ({
+import type { UserSession, UserCredentials } from "../types/foo-auth";
+
+export const getServerSideProps = withServerSideAuthProps<UserSession>(
+  fooAuthOptions,
+  async (context) => {
+    return {
       props: {
-        ...sessionPageProps,
+        ...context.sessionProps,
         // add more props below....
       },
-    })
-  );
-};
+    };
+  }
+);
 
 export default function SignInPage() {
   const queryClient = useQueryClient();
@@ -57,28 +50,26 @@ export default function SignInPage() {
       },
     }
   );
-  // const handleSignOut = useMutation(signOutMutation, {
-  //   onSuccess: () => {
-  //     // Invalidate session
-  //     queryClient.invalidateQueries("session");
-  //   },
-  // });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data = Object.fromEntries(
       new FormData(e.target as HTMLFormElement).entries()
     );
-    const authType = data.authType as string;
-    const payload = payloadValidation.parse(data);
+    //const authType = data.authType as string;
+    try {
+      const payload = credentialsValidation.parse(data);
 
-    signIn.mutate(
-      {
-        providerName: "credentials",
-        payload,
-      }
-      //{ onSuccess(data) { } }
-    );
+      signIn.mutate(
+        {
+          providerName: "credentials",
+          payload,
+        }
+        //{ onSuccess(data) { } }
+      );
+    } catch (e) {
+      console.log("ERR");
+    }
   };
 
   return (

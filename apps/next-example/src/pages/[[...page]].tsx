@@ -1,30 +1,33 @@
-// import { useMutation, useQuery, useQueryClient } from "react-query";
+import { withServerSideAuthProps } from "@foo-auth/next";
+import { useSession } from "@foo-auth/react";
 
-// import clsx from "clsx";
-
-import { getSessionPageProps } from "@foo-auth/next";
 import { fooAuthOptions } from "../foo-auth.next";
 
-import { useRouter } from "next/router";
-import type { GetServerSideProps } from "next";
+import type { UserSession } from "../types/foo-auth";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return getSessionPageProps(
-    { context, config: fooAuthOptions },
-    async (sessionPageProps) => ({
+export const getServerSideProps = withServerSideAuthProps<UserSession>(
+  fooAuthOptions,
+  async (context) => {
+    return {
       props: {
-        ...sessionPageProps,
+        ...context.sessionProps,
         // add more props below....
       },
-    })
-  );
-};
+    };
+  }
+);
 
 export default function IndexPage() {
-  const router = useRouter();
+  const session = useSession<UserSession>();
+  const fullName = session?.user
+    ? `${session.user.firstName} ${session.user.lastName}`
+    : "Guest";
+
+  console.log(session);
+
   return (
     <>
-      <h2 className="text-2xl">Authentified!</h2>
+      <h2 className="text-2xl">Hello {fullName} !</h2>
       <p>(Destroy session cookie and refresh.)</p>
     </>
   );

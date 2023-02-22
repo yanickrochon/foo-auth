@@ -1,3 +1,3 @@
-# Foo Auth Credentials Provider
+# Foo Authentication credentials provider
 
-*TODO*
+Please check out the [documentation](https://yanickrochon.github.io/foo-auth/providers/credentials) for more information.

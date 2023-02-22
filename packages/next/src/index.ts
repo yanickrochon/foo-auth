@@ -1,4 +1,4 @@
 export * from "./handler";
-export * from "./getSessionPageProps";
+export * from "./withServerSideAuthProps";
 export * from "./server-adapter";
 export * from "./types";

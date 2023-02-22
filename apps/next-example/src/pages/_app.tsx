@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { SessionProvider } from "@foo-auth/react";
 
 import type { FooAuthPageProps } from "@foo-auth/next";
-import type { SessionType } from "../foo-auth.next";
+import type { UserSession } from "../types/foo-auth";
 import type { AppType } from "next/app";
 
 import type { SessionProviderContextValue } from "@foo-auth/react";
@@ -14,12 +14,12 @@ import "../main.css";
 
 const queryClient = new QueryClient();
 
-const NextDemoApp: AppType<FooAuthPageProps<SessionType>> = ({
+const NextDemoApp: AppType<FooAuthPageProps<UserSession>> = ({
   Component,
   pageProps: { session, endpointPaths, ...pageProps },
 }) => {
   const sessionRef =
-    React.useRef<SessionProviderContextValue<SessionType>>(null);
+    React.useRef<SessionProviderContextValue<UserSession>>(null);
 
   return (
     <QueryClientProvider client={queryClient}>

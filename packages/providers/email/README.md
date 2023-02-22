@@ -1,3 +1,3 @@
-# Foo Auth Email Provider
+# Foo Authentication email provider
 
-*TODO*
+Please check out the [documentation](https://yanickrochon.github.io/foo-auth/providers/email) for more information.

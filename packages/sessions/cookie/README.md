@@ -1,3 +1,3 @@
 # Foo Auth Credentials Provider
 
-*TODO*
+Please check out the [documentation](https://yanickrochon.github.io/foo-auth/sessions/cookie) for more information.

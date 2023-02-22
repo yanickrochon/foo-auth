@@ -1,3 +1,7 @@
+import z from "zod";
+
+import { credentialsValidation } from "../schema/foo-auth";
+
 import data from "../data.json";
 
 type DataArray<T> = T extends readonly (infer ElementType)[]
@@ -15,7 +19,4 @@ export type UserSession = {
   user: Omit<User, "password">;
 };
 
-export interface UserCredentials {
-  username: string;
-  password: string;
-}
+export type UserCredentials = z.infer<typeof credentialsValidation>;

@@ -219,6 +219,74 @@ fetch("/api/csrf-token")
 </div>
 </HighlightWrapper>
 
+## Wrapping up with React
+
+Let's have a welcome page to see who is signed-in.
+
+<CodeHeader label="./src/pages/index.tsx" />
+
+```tsx
+import { withServerSideAuthProps } from "@foo-auth/next";
+import { useSession } from "@foo-auth/react";
+
+import { fooAuthOptions } from "../foo-auth.next";
+
+import type { UserSession } from "../types/foo-auth";
+
+export const getServerSideProps = withServerSideAuthProps<UserSession>(
+  fooAuthOptions,
+  async (context) => {
+    return {
+      props: {
+        ...context.sessionProps,
+        // add more props below....
+      },
+    };
+  }
+);
+
+export default function IndexPage() {
+  const session = useSession<UserSession>();
+  const fullName = session?.user
+    ? `${session.user.firstName} ${session.user.lastName}`
+    : "Guest";
+
+  console.log(session);
+
+  return (
+    <>
+      <h2 className="text-2xl">Hello {fullName} !</h2>
+      <p>(Destroy session cookie and refresh.)</p>
+    </>
+  );
+}
+```
+
+In order to use the `useSession` hook, the session provider needs to be rendered.
+
+<CodeHeader label="./src/pages/_app.tsx" />
+
+```tsx
+import { SessionProvider } from "@foo-auth/react";
+
+import type { FooAuthPageProps } from "@foo-auth/next";
+import type { UserSession } from "../types/foo-auth";
+import type { AppType } from "next/app";
+
+const FooAuthApp: AppType<FooAuthPageProps<UserSession>> = ({
+  Component,
+  pageProps: { session, endpointPaths, ...pageProps },
+}) => {
+  return (
+    <SessionProvider session={session} endpointPaths={endpointPaths}>
+      <Component {...pageProps} />
+    </SessionProvider>
+  );
+};
+
+export default FooAuthApp;
+```
+
 <BottomNavigation
   previousLink="/foo-auth/"
   previousLabel="About"

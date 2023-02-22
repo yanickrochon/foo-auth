@@ -11,6 +11,7 @@ const cleanPath = (p: string) =>
     .join("/");
 
 const { href } = Astro.props;
+// because git-pages may add trailing slashes... we compare path components only
 const isCurrentPath = cleanPath(Astro.url.pathname) === cleanPath(href);
 ---
 
