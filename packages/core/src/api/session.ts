@@ -9,21 +9,23 @@ import type {
 export function sessionEndpoints<SessionType>({
   session,
 }: FooAuthEndpoints): FooAuthEndpointHandlers<SessionType> {
-  return {
-    [session]: async ({ req, res, session }) => {
-      if (req.method === "GET") {
-        const sessionToken = await session.getSessionToken();
-        const sessionValue = await session.getSession();
-        const response: FooAuthApiSessionResponse<SessionType> = {
-          success: true,
-          token: sessionToken,
-          session: sessionValue,
-        };
+  return session
+    ? {
+        [session]: async ({ req, res, session }) => {
+          if (req.method === "GET") {
+            const sessionToken = await session.getSessionToken();
+            const sessionValue = await session.getSession();
+            const response: FooAuthApiSessionResponse<SessionType> = {
+              success: true,
+              token: sessionToken,
+              session: sessionValue,
+            };
 
-        res.status(200).send(response);
-      } else {
-        res.status(405).end();
+            res.status(200).send(response);
+          } else {
+            res.status(405).end();
+          }
+        },
       }
-    },
-  };
+    : {};
 }
