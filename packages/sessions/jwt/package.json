@@ -1,6 +1,6 @@
 {
   "name": "@foo-auth/session-jwt",
-  "version": "0.0.1-alpha",
+  "version": "0.0.2-alpha",
   "main": "./dist/jwt.js",
   "types": "./dist/jwt.d.ts",
   "license": "ISC",

@@ -1,5 +1,6 @@
 {
   "name": "@foo-auth/provider-email",
+  "private": true,
   "version": "0.0.1-alpha",
   "main": "./dist/email.js",
   "types": "./dist/email.d.ts",

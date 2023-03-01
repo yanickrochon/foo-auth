@@ -1,6 +1,6 @@
 {
   "name": "@foo-auth/next",
-  "version": "0.0.6-alpha",
+  "version": "0.0.7-alpha",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "ISC",

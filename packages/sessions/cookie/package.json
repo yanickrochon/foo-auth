@@ -1,6 +1,6 @@
 {
   "name": "@foo-auth/session-cookie",
-  "version": "0.0.1-alpha",
+  "version": "0.0.2-alpha",
   "main": "./dist/cookie.js",
   "types": "./dist/cookie.d.ts",
   "license": "ISC",

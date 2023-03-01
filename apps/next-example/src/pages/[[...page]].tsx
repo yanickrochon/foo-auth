@@ -7,10 +7,10 @@ import type { UserSession } from "../types/foo-auth";
 
 export const getServerSideProps = withServerSideAuthProps<UserSession>(
   fooAuthOptions,
-  async (context) => {
+  async ({ sessionProps }) => {
     return {
       props: {
-        ...context.sessionProps,
+        ...sessionProps,
         // add more props below....
       },
     };
