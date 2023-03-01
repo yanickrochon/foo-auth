@@ -2,6 +2,8 @@ import { getEndpoints } from "@foo-auth/core";
 
 import { serverApiAdapter } from "./server-adapter";
 
+import { getServerSession } from "./getServerSession";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { NextFooAuthOptions } from "./types";
 
