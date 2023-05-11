@@ -26,7 +26,11 @@ export default function IndexPage() {
   return (
     <>
       <h2 className="text-2xl">Hello {fullName} !</h2>
-      <p>(Destroy session cookie and refresh.)</p>
+      {session?.user ? (
+        <p>(Destroy session cookie and refresh.)</p>
+      ) : (
+        <p>(You should not be here...)</p>
+      )}
     </>
   );
 }
