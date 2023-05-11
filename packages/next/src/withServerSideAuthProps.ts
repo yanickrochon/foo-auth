@@ -45,7 +45,8 @@ export function withServerSideAuthProps<SessionType>(
       secretKey: options.secretKey,
     });
 
-    const hasSession = session.hasSession();
+    const userSession = await session.getSession();
+    const hasSession = !!userSession;
     let redirect = null;
 
     // assume that favicon.ico is missing if we see this
@@ -56,18 +57,15 @@ export function withServerSideAuthProps<SessionType>(
     } else {
       const url = req.getURL();
 
-      //console.log("***", hasSession, url?.pathname, config.pages?.signin);
-
       if (hasSession) {
         redirect = getRedirect(req);
         clearRedirect(req);
       } else if (
-        url &&
         options.pages?.signin &&
         !url.pathname.startsWith(options.pages.signin)
       ) {
         setRedirect(url.href, req);
-        redirect = `${url.origin}${url.basePath}${options.pages.signin}`;
+        redirect = options.pages.signin;
       }
 
       return redirect
@@ -81,7 +79,7 @@ export function withServerSideAuthProps<SessionType>(
         : pagePropsHandler(
             Object.assign(context, {
               sessionProps: {
-                session: await session.getSession(),
+                session: userSession,
                 endpointPaths: options.endpointPaths,
               },
             })

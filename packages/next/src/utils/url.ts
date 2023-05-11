@@ -2,7 +2,9 @@ import { IncomingMessage } from "http";
 
 import type { RequestURL } from "@foo-auth/core";
 
-const basePath: string = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const publicOrigin: string = process.env.NEXT_PUBLIC_ORIGIN ?? '';
+const basePathParts: string[] = process.env.NEXT_PUBLIC_BASE_PATH?.split('/').filter(Boolean) ?? [];
+const basePath: string = `/${basePathParts.join('/')}${basePathParts.length ? '/' : ''}`;
 
 const getFromMeta = (req: IncomingMessage) => {
   const meta = Object.getOwnPropertySymbols(req).find(
@@ -12,29 +14,50 @@ const getFromMeta = (req: IncomingMessage) => {
   return meta ? (req as any)[meta]?.__NEXT_INIT_URL ?? null : null;
 };
 
+const getBasePath = (url:URL) => {
+  let foundBasePath = '/';
+
+  if (url.origin === publicOrigin) {
+    const pathParts = url.pathname.split('\\').filter(Boolean);
+    let match = pathParts.length === basePathParts.length;
+
+    for (let i = 0, len = pathParts.length; match && i < len; ++i) {
+      if (pathParts[i] !== basePathParts[i]) {
+        match = false;
+      }
+    }
+
+    if (match) {
+      foundBasePath = basePath;
+    }
+  }
+
+  return foundBasePath;
+}
+
+/**
+ * The prupose of this function is to return a fully qualified URL from
+ * the current IncomingMessage. If the resolvedPathname is provided, it 
+ * should be the suffix of the URI being resolved, in case when Next.js
+ * is being mounted inside a subpath.
+ */
 export const getRequestURL = (
   req: IncomingMessage,
   resolvedPathname: string | undefined
-): RequestURL | null => {
-  const referer = req.headers.referer ?? getFromMeta(req);
+): RequestURL => {
+  const referer = req.headers.referer ?? getFromMeta(req) ?? `${publicOrigin}${req.url ?? '/'}`;
+  const url = new URL(referer);
+  const basePath = getBasePath(url);
+  const resolvedPath = resolvedPathname?.replace(/^\//, '') ?? '';
+  const newURL = Object.assign<URL, Partial<RequestURL>>(
+    new URL(
+      `${url.origin}${basePath}${resolvedPath}`
+    ),
+    {
+      search: url.search,
+      basePath,
+    }
+  ) as RequestURL;
 
-  if (referer) {
-    const url = new URL(referer);
-    const matchBasePathPrefix =
-      basePath.length && url.pathname.startsWith(basePath);
-    const pathname = matchBasePathPrefix
-      ? url.pathname.substring(0, basePath.length)
-      : url.pathname;
-    const href = resolvedPathname
-      ? url.href.substring(0, url.href.lastIndexOf(pathname)) + resolvedPathname
-      : url.href;
-
-    return Object.assign<URL, Partial<RequestURL>>(url, {
-      href: href,
-      basePath: matchBasePathPrefix ? basePath : "",
-      pathname: resolvedPathname ?? pathname,
-    }) as RequestURL;
-  } else {
-    return null;
-  }
+  return newURL;
 };
