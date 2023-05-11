@@ -6,7 +6,7 @@ export type RequestURL = URL & {
 };
 
 export type FooAuthApiRequest = IncomingMessage & {
-  getURL(): RequestURL | null;
+  getURL(): RequestURL;
 
   cookies: {
     has(key: string): boolean;
