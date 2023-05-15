@@ -9,6 +9,8 @@ import {
 
 import { serverPageAdapter } from "./server-adapter";
 
+import { getPageURL } from './utils/url';
+
 import type {
   PreviewData,
   GetServerSidePropsContext,
@@ -60,12 +62,13 @@ export function withServerSideAuthProps<SessionType>(
       if (hasSession) {
         redirect = getRedirect(req);
         clearRedirect(req);
-      } else if (
-        options.pages?.signin &&
-        !url.pathname.startsWith(options.pages.signin)
-      ) {
-        setRedirect(url.href, req);
-        redirect = options.pages.signin;
+      } else if (options.pages?.signin) {
+        const signInUrl = getPageURL(options.pages.signin);
+
+        if (url.pathname !== signInUrl.pathname) {
+          setRedirect(url.href, req);
+          redirect = options.pages.signin;
+        }
       }
 
       return redirect

@@ -2,9 +2,11 @@ import { IncomingMessage } from "http";
 
 import type { RequestURL } from "@foo-auth/core";
 
-const publicOrigin: string = process.env.NEXT_PUBLIC_ORIGIN ?? '';
+const publicOrigin: string = process.env.NEXT_PUBLIC_ORIGIN ?? 'http://localhost:3000';
 const basePathParts: string[] = process.env.NEXT_PUBLIC_BASE_PATH?.split('/').filter(Boolean) ?? [];
 const basePath: string = `/${basePathParts.join('/')}${basePathParts.length ? '/' : ''}`;
+
+const pageBasePath = process.env.NEXT_PUBLIC_FOO_AUTH_PATH || `${publicOrigin}${basePath}`;
 
 const getFromMeta = (req: IncomingMessage) => {
   const meta = Object.getOwnPropertySymbols(req).find(
@@ -61,3 +63,8 @@ export const getRequestURL = (
 
   return newURL;
 };
+
+/**
+ * Function used to return page URL
+ */
+export const getPageURL = (pagePath:string) => new URL(`${pageBasePath}${pagePath}`.replace(/\/\//g, '/'));
